@@ -4,6 +4,7 @@ import { Handle, Position, type NodeProps } from "@xyflow/react";
 import type { Lane, NodeKind, ProjectStatus } from "@/lib/graph";
 
 export type NodeCardData = {
+  id: string;
   title: string;
   lane: Lane;
   kind: NodeKind;
@@ -47,6 +48,9 @@ export function NodeCard({ data, selected }: NodeProps) {
           : "1px solid transparent",
         transition: "opacity 220ms ease, outline-color 160ms ease",
         cursor: "pointer",
+        // Matched by `node-{id}` on the detail hero — the browser FLIP
+        // animates the card into the title block on navigation.
+        viewTransitionName: `node-${d.id}`,
       }}
     >
       {/* Lane stripe */}

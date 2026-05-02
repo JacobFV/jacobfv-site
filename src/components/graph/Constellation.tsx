@@ -58,6 +58,7 @@ export function Constellation({ nodes, edges }: Props) {
         type: "card",
         position: { x: p.x, y: p.y },
         data: {
+          id: n.id,
           title: n.title,
           lane: n.lane,
           kind: n.kind,

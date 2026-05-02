@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getGraph } from "@/lib/graph";
+import { getGraph, type Edge, type Node } from "@/lib/graph";
 import { MDXContent } from "@/lib/mdx";
+import { Hero } from "@/components/reader/Hero";
+import { Lineage } from "@/components/reader/Lineage";
 
 export function generateStaticParams() {
   const { nodes } = getGraph();
@@ -19,8 +21,19 @@ export async function generateMetadata({
   return { title: node.title, description: node.summary };
 }
 
-function formatDate(iso: string) {
-  return new Date(iso).toISOString().slice(0, 10);
+function lineageFor(node: Node, edges: Edge[], byId: Map<string, Node>) {
+  const inbound: { node: Node; edge: Edge }[] = [];
+  const outbound: { node: Node; edge: Edge }[] = [];
+  for (const e of edges) {
+    if (e.target === node.id) {
+      const src = byId.get(e.source);
+      if (src) inbound.push({ node: src, edge: e });
+    } else if (e.source === node.id) {
+      const tgt = byId.get(e.target);
+      if (tgt) outbound.push({ node: tgt, edge: e });
+    }
+  }
+  return { inbound, outbound };
 }
 
 export default async function NodePage({
@@ -29,37 +42,37 @@ export default async function NodePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const node = getGraph().byId.get(slug);
+  const graph = getGraph();
+  const node = graph.byId.get(slug);
   if (!node) notFound();
 
+  const { inbound, outbound } = lineageFor(node, graph.edges, graph.byId);
+
   return (
-    <main className="mx-auto max-w-2xl px-6 py-16">
-      <Link
-        href="/"
-        className="font-[family-name:var(--font-mono)] text-xs text-[var(--color-ink-mute)]"
-      >
-        ← index
-      </Link>
+    <main className="mx-auto max-w-3xl px-6 py-10">
+      <div className="flex items-center justify-between font-[family-name:var(--font-mono)] text-xs text-[var(--color-ink-mute)]">
+        <Link href="/" className="no-underline">
+          ← constellation
+        </Link>
+        <Link href="/list" className="no-underline">
+          index
+        </Link>
+      </div>
 
       <article className="mt-8">
-        <header className="mb-10 border-b border-[var(--color-bg-2)] pb-6">
-          <div className="mb-3 flex items-baseline gap-3 font-[family-name:var(--font-mono)] text-xs text-[var(--color-ink-mute)]">
-            <time>{formatDate(node.date)}</time>
-            <span>·</span>
-            <span>{node.lane}</span>
-            <span>·</span>
-            <span>{node.kind}</span>
-          </div>
-          <h1
-            className="font-[family-name:var(--font-display)] text-4xl tracking-tight text-[var(--color-ink)]"
-            style={{ fontVariationSettings: '"opsz" 144' }}
-          >
-            {node.title}
-          </h1>
-          <p className="mt-3 text-lg text-[var(--color-ink-dim)]">
-            {node.summary}
-          </p>
-        </header>
+        <Lineage
+          current={{ id: node.id, title: node.title, lane: node.lane }}
+          inbound={inbound.map((x) => ({
+            node: { id: x.node.id, title: x.node.title, lane: x.node.lane },
+            edge: x.edge,
+          }))}
+          outbound={outbound.map((x) => ({
+            node: { id: x.node.id, title: x.node.title, lane: x.node.lane },
+            edge: x.edge,
+          }))}
+        />
+
+        <Hero node={node} />
 
         <div className="prose-mdx">
           <MDXContent code={node.body} />

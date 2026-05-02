@@ -3,14 +3,16 @@
 
 import * as runtime from "react/jsx-runtime";
 import type { ComponentType } from "react";
+import { readerComponents } from "@/components/reader/components";
 
 type MDXModule = {
   default: ComponentType<{ components?: Record<string, ComponentType> }>;
 };
 
 const sharedComponents: Record<string, ComponentType> = {
-  // Phase-specific MDX components (Scene, Figure, Sidetrack) are added in
-  // later phases. Phase 1 renders the bare MDX with default elements.
+  // Typography map; Phase 6 will add <Scene>, <Figure>, <Sidetrack> for
+  // /loop chapters.
+  ...readerComponents,
 };
 
 function compile(code: string): ComponentType<{

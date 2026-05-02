@@ -110,6 +110,21 @@ a:hover {
   border-top: 1px solid var(--color-bg-2);
 }
 
+/* Card → document shared-element morph. The browser View Transitions
+   API picks up matching `view-transition-name` on the constellation card
+   and the detail hero. Tuned to the design's spring feel (~360ms) with a
+   gentle overshoot. Reduced-motion users get the browser default fade. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 280ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::view-transition-group(*[name^="node-"]) {
+  animation-duration: 380ms;
+  animation-timing-function: cubic-bezier(0.32, 1.4, 0.42, 1);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -118,5 +133,9 @@ a:hover {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }
