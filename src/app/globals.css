@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens — see docs/DESIGN.md.
+ * Dark-first. Lane colors are the only chromatic variation between nodes.
+ */
+@theme {
+  --color-bg-0: #08090b;
+  --color-bg-1: #0e1014;
+  --color-bg-2: #15181e;
+  --color-ink: #f2f4f8;
+  --color-ink-dim: #9097a3;
+  --color-ink-mute: #5a6070;
+  --color-accent: #ff6b35;
+
+  --color-lane-research: #6fa8dc;
+  --color-lane-building: #93c47d;
+  --color-lane-writing: #c27ba0;
+  --color-lane-personal: #f1c232;
+
+  /* Fonts are wired via next/font in app/layout.tsx; the variables below
+     are populated at runtime so utilities like `font-display` resolve. */
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains);
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background: var(--color-bg-0);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-bg-0);
+}
+
+a {
+  color: inherit;
+  text-decoration-color: var(--color-ink-mute);
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  color: var(--color-accent);
+  text-decoration-color: var(--color-accent);
+}
+
+/* Phase 1 baseline MDX prose. Replaced by a typographic component map in
+   Phase 4 (`reader/`). */
+.prose-mdx {
+  max-width: 70ch;
+}
+.prose-mdx > * + * {
+  margin-top: 1em;
+}
+.prose-mdx h2 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  letter-spacing: -0.01em;
+  margin-top: 2em;
+}
+.prose-mdx h3 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  margin-top: 1.5em;
+}
+.prose-mdx blockquote {
+  border-left: 2px solid var(--color-bg-2);
+  padding-left: 1em;
+  color: var(--color-ink-dim);
+  font-style: italic;
+}
+.prose-mdx code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--color-bg-1);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
+.prose-mdx pre {
+  font-family: var(--font-mono);
+  background: var(--color-bg-1);
+  padding: 1em;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+.prose-mdx ul,
+.prose-mdx ol {
+  padding-left: 1.5em;
+}
+.prose-mdx ul {
+  list-style: disc;
+}
+.prose-mdx ol {
+  list-style: decimal;
+}
+.prose-mdx hr {
+  border: 0;
+  border-top: 1px solid var(--color-bg-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

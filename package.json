@@ -4,11 +4,13 @@
   "private": true,
   "description": "Jacob Valdez's site — a navigable graph of projects, writing, and visions.",
   "scripts": {
+    "predev": "velite build",
     "dev": "next dev",
+    "prebuild": "velite build",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "velite build && tsc --noEmit",
     "migrate": "tsx scripts/migrate-jekyll.ts",
     "format": "prettier --write ."
   },

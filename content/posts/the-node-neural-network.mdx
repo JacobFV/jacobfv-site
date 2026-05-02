@@ -1,0 +1,25 @@
+---
+title: The node-as-network
+date: 2022-04-03
+lane: research
+tags: [neural-networks, architecture]
+summary: A neuron is a network is a neuron. Notes on recursive function approximation and why "depth" is the wrong axis.
+influences: []
+realizes: []
+critiques: []
+---
+
+The standard story of deep learning is that depth gives you compositionality:
+each layer composes features from the layer below. Fine. But the same logic
+recurses inside a single neuron, which is itself a tiny circuit, and that
+circuit could in principle be a network too.
+
+Why don't we build it that way? Because the gradient gets ugly and the
+hardware likes flat tensors. Both of those are accidents of the current
+moment, not the structure of the problem.
+
+The interesting design space is *what changes when you treat every
+representation as a substructure*. Memory becomes routing. Attention becomes
+recursion. Feedforward becomes a special case of "no recursion this time."
+
+Notes toward a longer essay.
