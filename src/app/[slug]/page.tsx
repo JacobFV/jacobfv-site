@@ -4,6 +4,8 @@ import { getGraph, type Edge, type Node } from "@/lib/graph";
 import { MDXContent } from "@/lib/mdx";
 import { Hero } from "@/components/reader/Hero";
 import { Lineage } from "@/components/reader/Lineage";
+import { VisionRoomGate } from "@/components/three/VisionRoomGate";
+import { panelsFor } from "@/data/scenes";
 
 export function generateStaticParams() {
   const { nodes } = getGraph();
@@ -48,7 +50,12 @@ export default async function NodePage({
 
   const { inbound, outbound } = lineageFor(node, graph.edges, graph.byId);
 
-  return (
+  // Vision nodes with a registered sceneId open into the 3D room. The
+  // article body stays in the DOM as the skip-to-text fallback.
+  const panels =
+    node.kind === "vision" && node.sceneId ? panelsFor(node.sceneId) : null;
+
+  const article = (
     <main className="mx-auto max-w-3xl px-6 py-10">
       <div className="flex items-center justify-between font-[family-name:var(--font-mono)] text-xs text-[var(--color-ink-mute)]">
         <Link href="/" className="no-underline">
@@ -80,4 +87,9 @@ export default async function NodePage({
       </article>
     </main>
   );
+
+  if (panels) {
+    return <VisionRoomGate panels={panels}>{article}</VisionRoomGate>;
+  }
+  return article;
 }
