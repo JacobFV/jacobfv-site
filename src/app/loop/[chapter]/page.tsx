@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { loop as chapters } from "#content";
+import chapters from "../../../../.velite/loop.json";
 import { MDXContent } from "@/lib/mdx";
 import { Scene } from "@/components/loop/Scene";
 import { Figure } from "@/components/loop/Figure";

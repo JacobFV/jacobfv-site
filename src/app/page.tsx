@@ -3,7 +3,7 @@ import Link from "next/link";
 import { CmdK } from "@/components/chrome/CmdK";
 import { NowDock } from "@/components/chrome/NowDock";
 import { getGraph, type Lane, type Node, type NodeKind } from "@/lib/graph";
-import { now } from "#content";
+import now from "../../.velite/now.json";
 
 const laneClass: Record<Lane, string> = {
   research: "text-[var(--color-lane-research)]",

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { now } from "#content";
+import now from "../../../.velite/now.json";
 import { MDXContent } from "@/lib/mdx";
 
 export const metadata = {

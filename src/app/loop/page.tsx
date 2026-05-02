@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { loop as chapters } from "#content";
+import chapters from "../../../.velite/loop.json";
 
 export const metadata = {
   title: "A beautiful loop · Reading notes",

@@ -2,13 +2,11 @@
 // One source of truth; every view (constellation, timeline, document) is a
 // projection of this. See docs/ARCHITECTURE.md.
 
-import {
-  posts as rawPosts,
-  projects as rawProjects,
-  papers as rawPapers,
-  visions as rawVisions,
-  experience as rawExperience,
-} from "#content";
+import rawExperience from "../../.velite/experience.json";
+import rawPapers from "../../.velite/papers.json";
+import rawPosts from "../../.velite/posts.json";
+import rawProjects from "../../.velite/projects.json";
+import rawVisions from "../../.velite/visions.json";
 import { manualEdges } from "@/data/edges";
 import type { ManualEdge } from "../../velite.config";
 
@@ -70,6 +68,9 @@ type RawCollectionItem = {
   critiques?: string[];
 };
 
+const asCollection = (items: unknown): RawCollectionItem[] =>
+  items as RawCollectionItem[];
+
 const toNode = (kind: NodeKind) => (raw: RawCollectionItem): Node => {
   const id = slugBase(raw.slug);
   const extra = raw as Record<string, unknown>;
@@ -105,11 +106,11 @@ export function getGraph(): Graph {
   if (cached) return cached;
 
   const nodes: Node[] = [
-    ...rawPosts.map(toNode("post")),
-    ...rawProjects.map(toNode("project")),
-    ...rawPapers.map(toNode("paper")),
-    ...rawVisions.map(toNode("vision")),
-    ...rawExperience.map(toNode("experience")),
+    ...asCollection(rawPosts).map(toNode("post")),
+    ...asCollection(rawProjects).map(toNode("project")),
+    ...asCollection(rawPapers).map(toNode("paper")),
+    ...asCollection(rawVisions).map(toNode("vision")),
+    ...asCollection(rawExperience).map(toNode("experience")),
   ];
 
   const byId = new Map<string, Node>();

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getGraph } from "@/lib/graph";
-import { loop as chapters } from "#content";
+import chapters from "../../.velite/loop.json";
 
 const BASE = "https://jacobfv.com";
 
