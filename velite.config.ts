@@ -1,4 +1,6 @@
 import { defineConfig, defineCollection, s } from "velite";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
 
 // Shared shape for graph nodes. Frontmatter validation. See docs/CONTENT_MODEL.md.
 const lane = s.enum(["research", "building", "writing", "personal"]);
@@ -17,7 +19,15 @@ const baseFields = {
   influences: s.array(s.string()).default([]),
   realizes: s.array(s.string()).default([]),
   critiques: s.array(s.string()).default([]),
-  body: s.mdx(),
+  // copyLinkedFiles=false: bare-path markdown links like
+  // `[txt](Owner/Repo)` are common in migrated content; without this,
+  // Velite tries to resolve them as filesystem assets and fails.
+  // remark-math: lets `$...$` and `$$...$$` survive MDX brace/angle
+  // parsing so LaTeX inside posts doesn't crash the build.
+  body: s.mdx({
+    copyLinkedFiles: false,
+    remarkPlugins: [remarkGfm, remarkMath],
+  }),
 };
 
 const posts = defineCollection({
@@ -93,7 +103,10 @@ const now = defineCollection({
     updated: s.isodate(),
     building: s.string(),
     reading: s.string().optional(),
-    body: s.mdx(),
+    body: s.mdx({
+      copyLinkedFiles: false,
+      remarkPlugins: [remarkGfm, remarkMath],
+    }),
   }),
 });
 

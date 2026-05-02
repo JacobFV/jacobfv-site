@@ -15,10 +15,12 @@ const sharedComponents: Record<string, ComponentType> = {
 
 function compile(code: string): ComponentType<{
   components?: Record<string, ComponentType>;
-}> {
+}> | null {
+  if (!code || !code.trim()) return null;
   // eslint-disable-next-line @typescript-eslint/no-implied-eval
   const fn = new Function(code);
-  const mod = fn({ ...runtime }) as MDXModule;
+  const mod = fn({ ...runtime }) as MDXModule | undefined;
+  if (!mod || typeof mod.default !== "function") return null;
   return mod.default;
 }
 
@@ -30,6 +32,7 @@ export function MDXContent({
   components?: Record<string, ComponentType>;
 }) {
   const Component = compile(code);
+  if (!Component) return null;
   return (
     <Component components={{ ...sharedComponents, ...(components ?? {}) }} />
   );
