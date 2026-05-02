@@ -35,7 +35,7 @@ export default function ListPage() {
         </h1>
         <p className="mt-3 text-[var(--color-ink-dim)]">
           Flat list of every node — accessible mirror of the constellation
-          at <Link href="/">/</Link>.
+          at <Link href="/graph">/graph</Link>.
         </p>
       </header>
 

@@ -215,7 +215,11 @@ export function CmdK({ nodes }: Props) {
                 }}
               />
               <ActionItem
-                label="Switch to constellation"
+                label="Open the constellation"
+                onSelect={() => go("/graph")}
+              />
+              <ActionItem
+                label="Back to portfolio home"
                 onSelect={() => go("/")}
               />
               <ActionItem

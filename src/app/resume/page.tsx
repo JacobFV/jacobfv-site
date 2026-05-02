@@ -31,7 +31,7 @@ export default function ResumePage() {
         href="/"
         className="font-[family-name:var(--font-mono)] text-xs text-[var(--color-ink-mute)]"
       >
-        ← constellation
+        ← home
       </Link>
 
       <header className="mb-12 mt-8">

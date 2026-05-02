@@ -347,7 +347,7 @@ function FilterBar({
       }}
     >
       <Link
-        href="/"
+        href="/graph"
         style={{
           fontFamily: "var(--font-mono)",
           fontSize: 12,

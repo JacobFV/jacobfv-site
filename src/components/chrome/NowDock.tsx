@@ -13,9 +13,13 @@ type Props = {
 // (the 3D room owns the bottom-left at that point).
 export function NowDock({ building, reading, updated }: Props) {
   const pathname = usePathname();
+  // The portfolio home embeds the now panel in its hero, so the floating
+  // dock would be redundant there. Same for /loop (light-mode reader)
+  // and the 3D vision room.
   if (
+    pathname === "/" ||
     pathname.startsWith("/loop") ||
-    pathname.startsWith("/focus-statement") // sceneId-mounted vision
+    pathname.startsWith("/focus-statement")
   )
     return null;
 

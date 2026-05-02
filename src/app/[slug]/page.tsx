@@ -59,11 +59,16 @@ export default async function NodePage({
     <main className="mx-auto max-w-3xl px-6 py-10">
       <div className="flex items-center justify-between font-[family-name:var(--font-mono)] text-xs text-[var(--color-ink-mute)]">
         <Link href="/" className="no-underline">
-          ← constellation
+          ← home
         </Link>
-        <Link href="/list" className="no-underline">
-          index
-        </Link>
+        <div className="flex gap-4">
+          <Link href="/graph" className="no-underline">
+            constellation
+          </Link>
+          <Link href="/list" className="no-underline">
+            index
+          </Link>
+        </div>
       </div>
 
       <article className="mt-8">

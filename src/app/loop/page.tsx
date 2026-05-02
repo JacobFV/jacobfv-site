@@ -127,7 +127,7 @@ export default function LoopIndex() {
           href="/"
           style={{ color: "inherit", textDecoration: "none" }}
         >
-          ← back to the constellation
+          ← back to home
         </Link>
       </div>
     </main>
