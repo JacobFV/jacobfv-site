@@ -4,6 +4,7 @@ import { getGraph, type Edge, type Node } from "@/lib/graph";
 import { MDXContent } from "@/lib/mdx";
 import { Hero } from "@/components/reader/Hero";
 import { Lineage } from "@/components/reader/Lineage";
+import { LocalGraph } from "@/components/reader/LocalGraph";
 import { VisionRoomGate } from "@/components/three/VisionRoomGate";
 import { panelsFor } from "@/data/scenes";
 
@@ -89,6 +90,8 @@ export default async function NodePage({
         <div className="prose-mdx">
           <MDXContent code={node.body} />
         </div>
+
+        <LocalGraph focusId={node.id} />
       </article>
     </main>
   );
