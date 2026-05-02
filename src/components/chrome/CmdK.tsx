@@ -219,9 +219,8 @@ export function CmdK({ nodes }: Props) {
                 onSelect={() => go("/")}
               />
               <ActionItem
-                label="Switch to timeline (coming in Phase 5)"
-                disabled
-                onSelect={() => undefined}
+                label="Switch to timeline"
+                onSelect={() => go("/t")}
               />
               <ActionItem
                 label="Open the now dock"
