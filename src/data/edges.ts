@@ -130,12 +130,8 @@ export const manualEdges: ManualEdge[] = [
     weight: 0.95,
     note: "Project work distilled into the workshop submission.",
   },
-  {
-    source: "llms-are-the-update-rules-of-intelligent-fractals",
-    target: "the-node-neural-network",
-    kind: "influence",
-    weight: 0.6,
-  },
+  // llms-are-the-update-rules-of-intelligent-fractals →
+  // the-node-neural-network: in frontmatter.
 
   // ---- Meaning / morality cluster -------------------------------------
   {
@@ -150,12 +146,8 @@ export const manualEdges: ManualEdge[] = [
     kind: "influence",
     weight: 0.7,
   },
-  {
-    source: "is-there-no-balm-in-gilead",
-    target: "meaning-is-measured-in-bits",
-    kind: "influence",
-    weight: 0.6,
-  },
+  // is-there-no-balm-in-gilead → meaning-is-measured-in-bits lives in
+  // the post's frontmatter (where the prose justifies it).
   {
     source: "aligning-the-spiritual-evolution-of-ai",
     target: "moral-emergent-from-meaning-selection",
@@ -176,12 +168,7 @@ export const manualEdges: ManualEdge[] = [
     kind: "realization",
     weight: 0.95,
   },
-  {
-    source: "looking-ahead-to-future-impact",
-    target: "the-master-plan-part-2",
-    kind: "influence",
-    weight: 0.5,
-  },
+  // looking-ahead-to-future-impact → the-master-plan-part-2: in frontmatter.
 
   // ---- AI ↔ self threads ---------------------------------------------
   {
@@ -203,12 +190,8 @@ export const manualEdges: ManualEdge[] = [
     kind: "influence",
     weight: 0.5,
   },
-  {
-    source: "whose-dead-get-to-live-again",
-    target: "can-an-echo-become-a-voice-again",
-    kind: "influence",
-    weight: 0.7,
-  },
+  // whose-dead-get-to-live-again → can-an-echo-become-a-voice-again:
+  // in frontmatter.
 
   // ---- Site meta ------------------------------------------------------
   {

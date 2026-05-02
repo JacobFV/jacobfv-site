@@ -12,6 +12,7 @@
     "lint": "next lint",
     "typecheck": "velite build && tsc --noEmit",
     "migrate": "tsx scripts/migrate-jekyll.ts",
+    "validate": "velite build && tsx scripts/validate-edges.ts",
     "format": "prettier --write ."
   },
   "dependencies": {

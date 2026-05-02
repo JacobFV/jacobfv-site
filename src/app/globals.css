@@ -56,6 +56,14 @@ a:hover {
   text-decoration-color: var(--color-accent);
 }
 
+/* Hide the loop right rail on narrow screens — the chapter measure is
+   the priority there. */
+@media (max-width: 1100px) {
+  .loop-rail {
+    display: none;
+  }
+}
+
 /* Phase 1 baseline MDX prose. Replaced by a typographic component map in
    Phase 4 (`reader/`). */
 .prose-mdx {

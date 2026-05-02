@@ -5,6 +5,7 @@ import { MDXContent } from "@/lib/mdx";
 import { Scene } from "@/components/loop/Scene";
 import { Figure } from "@/components/loop/Figure";
 import { Sidetrack } from "@/components/loop/Sidetrack";
+import { MiniConstellation } from "@/components/loop/MiniConstellation";
 import { readerComponents } from "@/components/reader/components";
 
 const chapterComponents = {
@@ -79,7 +80,36 @@ export default async function ChapterPage({
         </div>
       </div>
 
-      <MDXContent code={current.body} components={chapterComponents} />
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr",
+          gap: 0,
+        }}
+      >
+        <MDXContent code={current.body} components={chapterComponents} />
+      </div>
+
+      {/* Right rail — only at >= 1100px so it doesn't crowd the read on
+          narrow screens. Hidden via CSS rather than a media-query JS check
+          to keep this a pure server component. */}
+      <div
+        className="loop-rail"
+        style={{
+          position: "fixed",
+          top: 0,
+          right: 32,
+          height: "100vh",
+          paddingTop: 64,
+          paddingBottom: 64,
+          zIndex: 5,
+          pointerEvents: "none",
+        }}
+      >
+        <div style={{ pointerEvents: "auto" }}>
+          <MiniConstellation />
+        </div>
+      </div>
 
       <nav
         style={{
