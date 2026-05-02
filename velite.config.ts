@@ -1,0 +1,119 @@
+import { defineConfig, defineCollection, s } from "velite";
+
+// Shared shape for graph nodes. Frontmatter validation. See docs/CONTENT_MODEL.md.
+const lane = s.enum(["research", "building", "writing", "personal"]);
+const edgeKind = s.enum(["influence", "realization", "critique", "collaboration"]);
+
+const baseFields = {
+  title: s.string().max(140),
+  date: s.isodate(),
+  endDate: s.isodate().optional(),
+  lane,
+  tags: s.array(s.string()).default([]),
+  summary: s.string().max(400),
+  hero: s
+    .object({ src: s.string(), alt: s.string() })
+    .optional(),
+  influences: s.array(s.string()).default([]),
+  realizes: s.array(s.string()).default([]),
+  critiques: s.array(s.string()).default([]),
+  body: s.mdx(),
+};
+
+const posts = defineCollection({
+  name: "Post",
+  pattern: "posts/**/*.mdx",
+  schema: s.object({ ...baseFields, slug: s.path() }).transform((d) => ({ ...d, kind: "post" as const })),
+});
+
+const projects = defineCollection({
+  name: "Project",
+  pattern: "projects/**/*.mdx",
+  schema: s
+    .object({
+      ...baseFields,
+      slug: s.path(),
+      status: s.enum(["idea", "active", "shipped", "shelved"]).default("active"),
+      links: s
+        .object({
+          github: s.string().optional(),
+          demo: s.string().optional(),
+          paper: s.string().optional(),
+        })
+        .optional(),
+    })
+    .transform((d) => ({ ...d, kind: "project" as const })),
+});
+
+const papers = defineCollection({
+  name: "Paper",
+  pattern: "papers/**/*.mdx",
+  schema: s
+    .object({
+      ...baseFields,
+      slug: s.path(),
+      authors: s.array(s.string()),
+      venue: s.string().optional(),
+      bibKey: s.string().optional(),
+      pdf: s.string().optional(),
+    })
+    .transform((d) => ({ ...d, kind: "paper" as const })),
+});
+
+const visions = defineCollection({
+  name: "Vision",
+  pattern: "visions/**/*.mdx",
+  schema: s
+    .object({
+      ...baseFields,
+      slug: s.path(),
+      sceneId: s.string().optional(),
+    })
+    .transform((d) => ({ ...d, kind: "vision" as const })),
+});
+
+const experience = defineCollection({
+  name: "Experience",
+  pattern: "experience/**/*.mdx",
+  schema: s
+    .object({
+      ...baseFields,
+      slug: s.path(),
+      org: s.string(),
+      links: s.object({ org: s.string().optional() }).optional(),
+    })
+    .transform((d) => ({ ...d, kind: "experience" as const })),
+});
+
+const now = defineCollection({
+  name: "Now",
+  pattern: "now/index.mdx",
+  single: true,
+  schema: s.object({
+    updated: s.isodate(),
+    building: s.string(),
+    reading: s.string().optional(),
+    body: s.mdx(),
+  }),
+});
+
+export default defineConfig({
+  root: "content",
+  output: {
+    data: ".velite",
+    assets: "public/static",
+    base: "/static/",
+    name: "[name]-[hash:6].[ext]",
+    clean: true,
+  },
+  collections: { posts, projects, papers, visions, experience, now },
+});
+
+// Type for hand-curated edges, used in src/data/edges.ts.
+export type ManualEdge = {
+  source: string;
+  target: string;
+  kind: "influence" | "realization" | "critique" | "collaboration";
+  weight?: number;
+  note?: string;
+};
