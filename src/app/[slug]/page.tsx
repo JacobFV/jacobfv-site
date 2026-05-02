@@ -1,9 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getGraph, type Edge, type Node } from "@/lib/graph";
+import { getGraph } from "@/lib/graph";
 import { MDXContent } from "@/lib/mdx";
 import { Hero } from "@/components/reader/Hero";
-import { Lineage } from "@/components/reader/Lineage";
 import { LocalGraph } from "@/components/reader/LocalGraph";
 import { VisionRoomGate } from "@/components/three/VisionRoomGate";
 import { panelsFor } from "@/data/scenes";
@@ -24,21 +22,6 @@ export async function generateMetadata({
   return { title: node.title, description: node.summary };
 }
 
-function lineageFor(node: Node, edges: Edge[], byId: Map<string, Node>) {
-  const inbound: { node: Node; edge: Edge }[] = [];
-  const outbound: { node: Node; edge: Edge }[] = [];
-  for (const e of edges) {
-    if (e.target === node.id) {
-      const src = byId.get(e.source);
-      if (src) inbound.push({ node: src, edge: e });
-    } else if (e.source === node.id) {
-      const tgt = byId.get(e.target);
-      if (tgt) outbound.push({ node: tgt, edge: e });
-    }
-  }
-  return { inbound, outbound };
-}
-
 export default async function NodePage({
   params,
 }: {
@@ -49,8 +32,6 @@ export default async function NodePage({
   const node = graph.byId.get(slug);
   if (!node) notFound();
 
-  const { inbound, outbound } = lineageFor(node, graph.edges, graph.byId);
-
   // Vision nodes with a registered sceneId open into the 3D room. The
   // article body stays in the DOM as the skip-to-text fallback.
   const panels =
@@ -58,33 +39,7 @@ export default async function NodePage({
 
   const article = (
     <main className="mx-auto max-w-3xl px-6 py-10">
-      <div className="flex items-center justify-between font-[family-name:var(--font-mono)] text-xs text-[var(--color-ink-mute)]">
-        <Link href="/" className="no-underline">
-          ← home
-        </Link>
-        <div className="flex gap-4">
-          <Link href="/graph" className="no-underline">
-            constellation
-          </Link>
-          <Link href="/list" className="no-underline">
-            index
-          </Link>
-        </div>
-      </div>
-
-      <article className="mt-8">
-        <Lineage
-          current={{ id: node.id, title: node.title, lane: node.lane }}
-          inbound={inbound.map((x) => ({
-            node: { id: x.node.id, title: x.node.title, lane: x.node.lane },
-            edge: x.edge,
-          }))}
-          outbound={outbound.map((x) => ({
-            node: { id: x.node.id, title: x.node.title, lane: x.node.lane },
-            edge: x.edge,
-          }))}
-        />
-
+      <article>
         <Hero node={node} />
 
         <div className="prose-mdx">

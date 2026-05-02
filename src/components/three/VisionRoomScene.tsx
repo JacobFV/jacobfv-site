@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useMemo, useRef } from "react";
+import { Suspense, useEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import {
   Float,
@@ -19,6 +19,8 @@ type Props = {
 // The vision room: dark, foggy, dolly along a bezier path past floating
 // panels. Driven entirely by scroll. WebGL fallback is the parent's job.
 export function VisionRoomScene({ panels }: Props) {
+  const pages = Math.max(2, panels.length + 1);
+
   return (
     <Canvas
       gl={{ antialias: true }}
@@ -32,7 +34,10 @@ export function VisionRoomScene({ panels }: Props) {
       <pointLight position={[-6, -2, -8]} intensity={0.4} color="#FF6B35" />
 
       <Suspense fallback={null}>
-        <ScrollControls pages={Math.max(2, panels.length + 1)} damping={0.18}>
+        <ScrollControls pages={pages} damping={0.18}>
+          {/* Start ~half a panel in so the first beat is partly visible
+              without the reader having to scroll first. */}
+          <InitialScroll offset={0.5 / pages} />
           <CameraDolly panels={panels} />
           <Panels panels={panels} />
           <Floor />
@@ -40,6 +45,16 @@ export function VisionRoomScene({ panels }: Props) {
       </Suspense>
     </Canvas>
   );
+}
+
+function InitialScroll({ offset }: { offset: number }) {
+  const scroll = useScroll();
+  useEffect(() => {
+    const el = scroll.el;
+    if (!el) return;
+    el.scrollTop = (el.scrollHeight - el.clientHeight) * offset;
+  }, [scroll, offset]);
+  return null;
 }
 
 // Cubic-Bezier path along the +z axis with a soft S-curve in x.

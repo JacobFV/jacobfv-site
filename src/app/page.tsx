@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { CmdK } from "@/components/chrome/CmdK";
 import { NowDock } from "@/components/chrome/NowDock";
@@ -69,22 +70,23 @@ export default function HomePage() {
         <section className="mb-32 grid gap-12 md:grid-cols-[1.4fr_1fr]">
           <div>
             <p className="mb-4 font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.18em] text-[var(--color-ink-mute)]">
-              Jacob Valdez
+              Jacob Valdez · building VibeStartup
             </p>
             <h1
               className="font-[family-name:var(--font-display)] text-5xl leading-[0.98] tracking-tight text-[var(--color-ink)] sm:text-6xl md:text-7xl"
               style={{ fontVariationSettings: '"opsz" 144' }}
             >
-              Building a $1,000 humanoid robot, and the substrate it
-              needs to think on.
+              Software engineer building AI systems, end to end.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-[1.65] text-[var(--color-ink-dim)]">
-              Founder at <a href="https://limboid.ai" target="_blank" rel="noreferrer" className="text-[var(--color-ink)] underline decoration-[var(--color-ink-mute)] underline-offset-2 hover:decoration-[var(--color-accent)]">Limboid</a>.
-              Recently API/Integration Architect at <a href="https://agi.app" target="_blank" rel="noreferrer" className="text-[var(--color-ink)] underline decoration-[var(--color-ink-mute)] underline-offset-2 hover:decoration-[var(--color-accent)]">AGI, Inc.</a> Long
-              arc on agents, world models, and the cost-floor of
-              embodied general intelligence. Most of what I do
-              decomposes into a few recurring arguments — this site
-              maps them.
+              Currently building <a href="https://vibestartup.pro" target="_blank" rel="noreferrer" className="text-[var(--color-ink)] underline decoration-[var(--color-ink-mute)] underline-offset-2 hover:decoration-[var(--color-accent)]">VibeStartup</a> —
+              a platform for building startups end to end.
+              Most recently API/Integration Architect at <a href="https://agi.app" target="_blank" rel="noreferrer" className="text-[var(--color-ink)] underline decoration-[var(--color-ink-mute)] underline-offset-2 hover:decoration-[var(--color-accent)]">AGI, Inc.</a>,
+              shipping APIs, integrations, and agent infrastructure for
+              on-device mobile AI agents. Earlier: Breezy, Deepshard,
+              Motio, and UTA research labs. BS Computer Science from
+              UT Arlington. I love science and engineering and people —
+              this site maps the arguments behind the work.
             </p>
             <div className="mt-8 flex flex-wrap gap-3 font-[family-name:var(--font-mono)] text-xs">
               <Link
@@ -114,11 +116,27 @@ export default function HomePage() {
             </div>
           </div>
 
-          <NowPanel
-            building={now.building}
-            reading={now.reading}
-            updated={now.updated}
-          />
+          <div className="flex flex-col items-end gap-6">
+            <Image
+              src="/img/prof_pic.jpg"
+              alt="Jacob Valdez"
+              width={220}
+              height={260}
+              priority
+              className="block border border-[var(--color-bg-2)] grayscale-[15%]"
+              style={{
+                width: "100%",
+                maxWidth: 260,
+                height: "auto",
+                objectFit: "cover",
+              }}
+            />
+            <NowPanel
+              building={now.building}
+              reading={now.reading}
+              updated={now.updated}
+            />
+          </div>
         </section>
 
         {/* ---- Featured projects ---- */}
@@ -177,7 +195,7 @@ export default function HomePage() {
                 href="/focus-statement"
                 className="text-[var(--color-ink-dim)] no-underline hover:text-[var(--color-accent)]"
               >
-                /focus-statement
+                /the-robot
               </Link>
               <span className="mx-2 opacity-40">·</span>
               <Link
@@ -306,7 +324,7 @@ function NowPanel({
   return (
     <Link
       href="/now"
-      className="block self-start rounded border border-[var(--color-bg-2)] p-6 no-underline hover:border-[var(--color-accent)]/40"
+      className="block w-full rounded border border-[var(--color-bg-2)] p-6 no-underline hover:border-[var(--color-accent)]/40"
     >
       <div className="mb-4 flex items-baseline justify-between font-[family-name:var(--font-mono)] text-xs text-[var(--color-ink-mute)]">
         <span className="uppercase tracking-[0.16em]">now</span>

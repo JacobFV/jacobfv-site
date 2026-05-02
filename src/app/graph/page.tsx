@@ -1,13 +1,11 @@
-import { Constellation } from "@/components/graph/Constellation";
+import { Hypersphere } from "@/components/graph/Hypersphere";
 import { CmdK } from "@/components/chrome/CmdK";
-import { NowDock } from "@/components/chrome/NowDock";
 import { getGraph } from "@/lib/graph";
-import { now } from "#content";
 
 export const metadata = {
   title: "Constellation · Jacob Valdez",
   description:
-    "Every node — projects, posts, papers, visions — laid out by force. Hover to see neighbors; click to open.",
+    "A slow-rotating sphere of every node — projects, posts, papers, visions. Drag to rotate, scroll to zoom, tap a node to read.",
 };
 
 export default function GraphPage() {
@@ -26,13 +24,8 @@ export default function GraphPage() {
 
   return (
     <>
-      <Constellation nodes={nodesLite as never} edges={edges} />
+      <Hypersphere nodes={nodesLite as never} edges={edges} />
       <CmdK nodes={searchable} />
-      <NowDock
-        building={now.building}
-        reading={now.reading}
-        updated={now.updated}
-      />
     </>
   );
 }
