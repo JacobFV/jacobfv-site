@@ -1,6 +1,8 @@
 import { Constellation } from "@/components/graph/Constellation";
 import { CmdK } from "@/components/chrome/CmdK";
+import { NowDock } from "@/components/chrome/NowDock";
 import { getGraph } from "@/lib/graph";
+import { now } from "#content";
 
 export default function HomePage() {
   const { nodes, edges } = getGraph();
@@ -21,6 +23,11 @@ export default function HomePage() {
     <>
       <Constellation nodes={nodesLite as never} edges={edges} />
       <CmdK nodes={searchable} />
+      <NowDock
+        building={now.building}
+        reading={now.reading}
+        updated={now.updated}
+      />
     </>
   );
 }

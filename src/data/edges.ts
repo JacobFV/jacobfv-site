@@ -8,13 +8,215 @@
 
 import type { ManualEdge } from "../../velite.config";
 
+// Hand-curated cross-cutting relationships. Each entry is a directed
+// edge: source → target. `note` shows on edge hover. weight ∈ [0, 1]
+// controls visual prominence (thickness, opacity).
 export const manualEdges: ManualEdge[] = [
-  // Example (uncomment after Phase 2 migration):
-  // {
-  //   source: "self-organized-criticality",
-  //   target: "the-fertile-crescent",
-  //   kind: "influence",
-  //   weight: 0.8,
-  //   note: "SOC framing reappears as the dynamics layer.",
-  // },
+  // ---- Computatrum lineage ---------------------------------------------
+  {
+    source: "computatrum",
+    target: "full-stack-artificial-intelligence",
+    kind: "realization",
+    weight: 0.85,
+    note: "Computatrum is the surviving subgoal of the broader FSAI program.",
+  },
+  {
+    source: "the-multi-agent-network",
+    target: "full-stack-artificial-intelligence",
+    kind: "realization",
+    weight: 0.7,
+  },
+  {
+    source: "multiparadigm-networks",
+    target: "full-stack-artificial-intelligence",
+    kind: "realization",
+    weight: 0.6,
+  },
+  {
+    source: "the-fertile-crescent",
+    target: "computatrum",
+    kind: "influence",
+    weight: 0.7,
+    note: "Fertile Crescent's ecosystem framing seeds Computatrum's substrate idea.",
+  },
+  {
+    source: "computatrum-post",
+    target: "computatrum",
+    kind: "realization",
+    weight: 0.9,
+    note: "The post is the public writeup of the project.",
+  },
+  {
+    source: "full-stack-artificial-intelligence-post",
+    target: "full-stack-artificial-intelligence",
+    kind: "realization",
+    weight: 0.9,
+  },
+
+  // ---- Robotics / Limboid ---------------------------------------------
+  {
+    source: "limboid",
+    target: "focus-statement",
+    kind: "realization",
+    weight: 0.9,
+    note: "Limboid is the company shell around the focus-statement vision.",
+  },
+  {
+    source: "limboid-founder",
+    target: "limboid",
+    kind: "realization",
+    weight: 0.8,
+  },
+  {
+    source: "why-arent-pneumatic-hydraulic-aritificial-muscle-actuated-humanoid-robots-more-common",
+    target: "limboid",
+    kind: "influence",
+    weight: 0.7,
+    note: "Hardware design rationale that shapes the actuator choices.",
+  },
+  {
+    source: "labatron",
+    target: "background",
+    kind: "realization",
+    weight: 0.5,
+    note: "Early hardware-side hands-on, referenced in the bio background essay.",
+  },
+
+  // ---- RL / theory threads --------------------------------------------
+  {
+    source: "broadening-and-building-beyond-classical-reinforcement-learning",
+    target: "broadening-rl",
+    kind: "realization",
+    weight: 0.95,
+    note: "The project page that became the survey paper.",
+  },
+  {
+    source: "self-organized-criticality",
+    target: "the-fertile-crescent",
+    kind: "influence",
+    weight: 0.7,
+    note: "SOC framing reappears as the dynamics layer.",
+  },
+  {
+    source: "estimating-the-critical-mass",
+    target: "self-organized-criticality",
+    kind: "influence",
+    weight: 0.6,
+  },
+  {
+    source: "what-is-intelligence",
+    target: "reaching-for-the-intangible",
+    kind: "influence",
+    weight: 0.7,
+  },
+
+  // ---- Architecture threads -------------------------------------------
+  {
+    source: "the-node-neural-network",
+    target: "multigraph-nn",
+    kind: "influence",
+    weight: 0.75,
+  },
+  {
+    source: "multigraph-nn",
+    target: "multi-graph-former-project",
+    kind: "realization",
+    weight: 0.85,
+  },
+  {
+    source: "multi-graph-former-project",
+    target: "multi-graph-former",
+    kind: "realization",
+    weight: 0.95,
+    note: "Project work distilled into the workshop submission.",
+  },
+  {
+    source: "llms-are-the-update-rules-of-intelligent-fractals",
+    target: "the-node-neural-network",
+    kind: "influence",
+    weight: 0.6,
+  },
+
+  // ---- Meaning / morality cluster -------------------------------------
+  {
+    source: "meaning-is-measured-in-bits",
+    target: "moral-emergent-from-meaning-selection",
+    kind: "realization",
+    weight: 0.85,
+  },
+  {
+    source: "implications-of-a-substrate-agnostic-moral-calculus",
+    target: "moral-emergent-from-meaning-selection",
+    kind: "influence",
+    weight: 0.7,
+  },
+  {
+    source: "is-there-no-balm-in-gilead",
+    target: "meaning-is-measured-in-bits",
+    kind: "influence",
+    weight: 0.6,
+  },
+  {
+    source: "aligning-the-spiritual-evolution-of-ai",
+    target: "moral-emergent-from-meaning-selection",
+    kind: "influence",
+    weight: 0.55,
+  },
+
+  // ---- Master plan arc ------------------------------------------------
+  {
+    source: "the-master-plan-part-1",
+    target: "the-master-plan-part-0",
+    kind: "realization",
+    weight: 0.95,
+  },
+  {
+    source: "the-master-plan-part-2",
+    target: "the-master-plan-part-1",
+    kind: "realization",
+    weight: 0.95,
+  },
+  {
+    source: "looking-ahead-to-future-impact",
+    target: "the-master-plan-part-2",
+    kind: "influence",
+    weight: 0.5,
+  },
+
+  // ---- AI ↔ self threads ---------------------------------------------
+  {
+    source: "fighting-ai",
+    target: "costs-of-agi",
+    kind: "critique",
+    weight: 0.6,
+    note: "Pushes back on the optimism of the costs essay.",
+  },
+  {
+    source: "personal-ethical-delimna",
+    target: "costs-of-agi",
+    kind: "influence",
+    weight: 0.6,
+  },
+  {
+    source: "can-an-echo-become-a-voice-again",
+    target: "is-there-no-balm-in-gilead",
+    kind: "influence",
+    weight: 0.5,
+  },
+  {
+    source: "whose-dead-get-to-live-again",
+    target: "can-an-echo-become-a-voice-again",
+    kind: "influence",
+    weight: 0.7,
+  },
+
+  // ---- Site meta ------------------------------------------------------
+  {
+    source: "jacobfv-site",
+    target: "jacobfv-github-io",
+    kind: "critique",
+    weight: 0.6,
+    note: "The new site is a deliberate departure from the al-folio Jekyll one.",
+  },
 ];
+
