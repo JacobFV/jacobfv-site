@@ -5,18 +5,24 @@ import * as runtime from "react/jsx-runtime";
 import type { ComponentType } from "react";
 import { readerComponents } from "@/components/reader/components";
 
+// MDX components have arbitrary prop shapes (Sidetrack takes `to`,
+// Figure takes `caption`, etc.). The MDX runtime dispatches by name, so
+// we can't strongly type the prop set here.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type MDXComponents = Record<string, ComponentType<any>>;
+
 type MDXModule = {
-  default: ComponentType<{ components?: Record<string, ComponentType> }>;
+  default: ComponentType<{ components?: MDXComponents }>;
 };
 
-const sharedComponents: Record<string, ComponentType> = {
-  // Typography map; Phase 6 will add <Scene>, <Figure>, <Sidetrack> for
-  // /loop chapters.
+const sharedComponents: MDXComponents = {
+  // Typography map; route-specific components (Scene, Figure, Sidetrack
+  // for /loop) are merged in by the page that renders them.
   ...readerComponents,
 };
 
 function compile(code: string): ComponentType<{
-  components?: Record<string, ComponentType>;
+  components?: MDXComponents;
 }> | null {
   if (!code || !code.trim()) return null;
   // eslint-disable-next-line @typescript-eslint/no-implied-eval
@@ -31,7 +37,7 @@ export function MDXContent({
   components,
 }: {
   code: string;
-  components?: Record<string, ComponentType>;
+  components?: MDXComponents;
 }) {
   const Component = compile(code);
   if (!Component) return null;

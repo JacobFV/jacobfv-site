@@ -1,5 +1,6 @@
 import Link from "next/link";
-import type { ComponentType, ImgHTMLAttributes } from "react";
+import type { ImgHTMLAttributes } from "react";
+import type { MDXComponents } from "@/lib/mdx";
 
 // Reader typography components. Mapped into MDXContent so migrated bodies
 // inherit Fraunces / Inter / JetBrains Mono and the dark-first palette
@@ -183,21 +184,21 @@ const TD = (p: React.HTMLAttributes<HTMLTableCellElement>) => (
   />
 );
 
-export const readerComponents: Record<string, ComponentType> = {
-  h1: H1 as ComponentType,
-  h2: H2 as ComponentType,
-  h3: H3 as ComponentType,
-  h4: H4 as ComponentType,
-  p: P as ComponentType,
-  a: A as ComponentType,
-  ul: UL as ComponentType,
-  ol: OL as ComponentType,
-  blockquote: Blockquote as ComponentType,
-  code: InlineCode as ComponentType,
-  pre: Pre as ComponentType,
-  hr: HR as ComponentType,
-  img: Img as ComponentType,
-  table: Table as ComponentType,
-  th: TH as ComponentType,
-  td: TD as ComponentType,
+export const readerComponents: MDXComponents = {
+  h1: H1,
+  h2: H2,
+  h3: H3,
+  h4: H4,
+  p: P,
+  a: A,
+  ul: UL,
+  ol: OL,
+  blockquote: Blockquote,
+  code: InlineCode,
+  pre: Pre,
+  hr: HR,
+  img: Img,
+  table: Table,
+  th: TH,
+  td: TD,
 };

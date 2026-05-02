@@ -95,6 +95,23 @@ const experience = defineCollection({
     .transform((d) => ({ ...d, kind: "experience" as const })),
 });
 
+const loop = defineCollection({
+  name: "LoopChapter",
+  pattern: "loop/**/*.mdx",
+  schema: s
+    .object({
+      title: s.string().max(140),
+      order: s.number().int(),
+      summary: s.string().max(400),
+      slug: s.path(),
+      body: s.mdx({
+        copyLinkedFiles: false,
+        remarkPlugins: [remarkGfm, remarkMath],
+      }),
+    })
+    .transform((d) => ({ ...d, kind: "loop" as const })),
+});
+
 const now = defineCollection({
   name: "Now",
   pattern: "now/index.mdx",
@@ -119,7 +136,7 @@ export default defineConfig({
     name: "[name]-[hash:6].[ext]",
     clean: true,
   },
-  collections: { posts, projects, papers, visions, experience, now },
+  collections: { posts, projects, papers, visions, experience, loop, now },
 });
 
 // Type for hand-curated edges, used in src/data/edges.ts.
