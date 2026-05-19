@@ -4,20 +4,12 @@
 //
 // Layout: d3-force on the subgraph, scaled to a ~720×360 panel.
 
-import Link from "next/link";
 import { computeForceLayout } from "@/lib/layout";
-import {
-  getGraph,
-  nodeHref,
-  type Edge,
-  type EdgeKind,
-  type Lane,
-  type Node,
-} from "@/lib/graph";
+import { getGraph, nodeHref, type Edge, type EdgeKind, type Lane, type Node } from "@/lib/graph";
 
 const W = 720;
 const H = 360;
-const PAD = 24;
+const PAD = 44;
 const NODE_R_FOCUS = 7;
 const NODE_R_1 = 5;
 const NODE_R_2 = 3.5;
@@ -35,6 +27,10 @@ const dashFor: Record<EdgeKind, string | undefined> = {
   critique: "2 3",
   collaboration: undefined,
 };
+
+function shortTitle(title: string, max = 30) {
+  return title.length > max ? `${title.slice(0, max - 1)}...` : title;
+}
 
 function neighborhood(focusId: string): {
   nodes: Node[];
@@ -59,10 +55,8 @@ function neighborhood(focusId: string): {
     .filter(([, r]) => r === 1)
     .map(([id]) => id);
   for (const e of edges) {
-    if (oneRing.includes(e.source) && !rings.has(e.target))
-      rings.set(e.target, 2);
-    if (oneRing.includes(e.target) && !rings.has(e.source))
-      rings.set(e.source, 2);
+    if (oneRing.includes(e.source) && !rings.has(e.target)) rings.set(e.target, 2);
+    if (oneRing.includes(e.target) && !rings.has(e.source)) rings.set(e.source, 2);
   }
 
   const ids = new Set(rings.keys());
@@ -106,43 +100,57 @@ export function LocalGraph({ focusId }: { focusId: string }) {
     ]),
   );
 
-  const oneCount = Array.from(rings.values()).filter((r) => r === 1).length;
-  const twoCount = Array.from(rings.values()).filter((r) => r === 2).length;
-
   return (
     <section className="mt-16 border-t border-[var(--color-bg-2)]/50 pt-8">
-      <div className="mb-4 flex items-baseline justify-between">
+      <div className="mb-4">
         <div>
-          <p className="font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.16em] text-[var(--color-ink-mute)]">
+          <p className="font-[family-name:var(--font-mono)] text-xs tracking-[0.16em] text-[var(--color-ink-mute)] uppercase">
             Neighborhood
           </p>
           <h2
             className="mt-1 font-[family-name:var(--font-display)] text-xl text-[var(--color-ink)]"
             style={{ fontVariationSettings: '"opsz" 96' }}
           >
-            How this connects
+            Related
           </h2>
-        </div>
-        <div className="font-[family-name:var(--font-mono)] text-xs text-[var(--color-ink-mute)]">
-          {oneCount} direct · {twoCount} two-hop
         </div>
       </div>
 
-      <div
-        style={{
-          background: "rgba(8, 9, 11, 0.4)",
-          border: "1px solid var(--color-bg-2)",
-          borderRadius: 6,
-          padding: 12,
-        }}
-      >
+      <div className="-mx-2 sm:mx-0">
         <svg
           viewBox={`0 0 ${W} ${H}`}
           width="100%"
-          style={{ display: "block", height: "auto", maxHeight: H }}
+          style={{ display: "block", height: "auto", maxHeight: H, overflow: "visible" }}
           role="img"
           aria-label="Local graph: this node, its direct neighbors, and their neighbors"
         >
+          <style>{`
+            .local-graph-node {
+              transition: transform 160ms ease, opacity 160ms ease;
+              transform-box: fill-box;
+              transform-origin: center;
+            }
+            .local-graph-link {
+              text-decoration: none;
+            }
+            .local-graph-link:hover .local-graph-node,
+            .local-graph-link:focus-visible .local-graph-node,
+            .local-graph-focus:hover .local-graph-node {
+              transform: scale(1.38);
+            }
+            .local-graph-link:hover .local-graph-label,
+            .local-graph-link:focus-visible .local-graph-label,
+            .local-graph-focus:hover .local-graph-label {
+              fill: var(--color-ink);
+            }
+            .local-graph-label {
+              paint-order: stroke;
+              stroke: var(--color-bg-0);
+              stroke-width: 3px;
+              stroke-linejoin: round;
+            }
+          `}</style>
+
           {/* Edges */}
           {edges.map((e, i) => {
             const a = positions.get(e.source);
@@ -177,94 +185,57 @@ export function LocalGraph({ focusId }: { focusId: string }) {
 
               if (ring === 0) {
                 return (
-                  <g key={n.id}>
-                    <circle
-                      cx={p.x}
-                      cy={p.y}
-                      r={r}
-                      fill={laneColor[n.lane]}
-                      stroke={stroke}
-                      strokeWidth={2}
-                      opacity={opacity}
-                    />
-                    <text
-                      x={p.x}
-                      y={p.y - r - 6}
-                      textAnchor="middle"
-                      fontSize={10}
-                      fontFamily="var(--font-mono)"
-                      fill="#F2F4F8"
-                    >
-                      {n.title.length > 32 ? n.title.slice(0, 30) + "…" : n.title}
-                    </text>
+                  <g
+                    key={n.id}
+                    className="local-graph-focus"
+                    transform={`translate(${p.x} ${p.y})`}
+                  >
+                    <g className="local-graph-node">
+                      <circle
+                        r={r}
+                        fill={laneColor[n.lane]}
+                        stroke={stroke}
+                        strokeWidth={2}
+                        opacity={opacity}
+                      />
+                      <text
+                        className="local-graph-label"
+                        y={-r - 7}
+                        textAnchor="middle"
+                        fontSize={10}
+                        fontFamily="var(--font-mono)"
+                        fill="#F2F4F8"
+                      >
+                        {shortTitle(n.title, 32)}
+                      </text>
+                    </g>
                   </g>
                 );
               }
 
               return (
-                <a key={n.id} href={nodeHref(n)}>
-                  <circle
-                    cx={p.x}
-                    cy={p.y}
-                    r={r}
-                    fill={laneColor[n.lane]}
-                    opacity={opacity}
-                  >
-                    <title>{n.title}</title>
-                  </circle>
-                  {ring === 1 && (
-                    <text
-                      x={p.x}
-                      y={p.y - r - 4}
-                      textAnchor="middle"
-                      fontSize={9}
-                      fontFamily="var(--font-mono)"
-                      fill="#9097A3"
-                      style={{ pointerEvents: "none" }}
-                    >
-                      {n.title.length > 28 ? n.title.slice(0, 26) + "…" : n.title}
-                    </text>
-                  )}
+                <a key={n.id} href={nodeHref(n)} className="local-graph-link">
+                  <g transform={`translate(${p.x} ${p.y})`}>
+                    <g className="local-graph-node">
+                      <title>{n.title}</title>
+                      <circle r={r} fill={laneColor[n.lane]} opacity={opacity} />
+                      <text
+                        className="local-graph-label"
+                        y={-r - 5}
+                        textAnchor="middle"
+                        fontSize={ring === 1 ? 9 : 8}
+                        fontFamily="var(--font-mono)"
+                        fill={ring === 1 ? "#AEB5C1" : "#7B828E"}
+                      >
+                        {shortTitle(n.title, ring === 1 ? 28 : 24)}
+                      </text>
+                    </g>
+                  </g>
                 </a>
               );
             })}
         </svg>
-
-        <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 font-[family-name:var(--font-mono)] text-[10px] text-[var(--color-ink-mute)]">
-          <span className="flex items-center gap-1.5">
-            <span className="inline-block h-1 w-4 bg-[#FF6B35]" /> direct edge
-          </span>
-          <span className="flex items-center gap-1.5">
-            <svg width="20" height="2">
-              <line x1="0" y1="1" x2="20" y2="1" stroke="#5A6070" strokeWidth="1" />
-            </svg>
-            influence
-          </span>
-          <span className="flex items-center gap-1.5">
-            <svg width="20" height="2">
-              <line x1="0" y1="1" x2="20" y2="1" stroke="#5A6070" strokeDasharray="5 4" strokeWidth="1" />
-            </svg>
-            realization
-          </span>
-          <span className="flex items-center gap-1.5">
-            <svg width="20" height="2">
-              <line x1="0" y1="1" x2="20" y2="1" stroke="#5A6070" strokeDasharray="2 3" strokeWidth="1" />
-            </svg>
-            critique
-          </span>
-        </div>
       </div>
-
-      <p className="mt-4 font-[family-name:var(--font-mono)] text-xs text-[var(--color-ink-mute)]">
-        This view: the node, every node it links to or from, and theirs in turn.
-        Click a circle to jump.{" "}
-        <Link
-          href="/graph"
-          className="text-[var(--color-ink-dim)] no-underline hover:text-[var(--color-accent)]"
-        >
-          full constellation →
-        </Link>
-      </p>
     </section>
   );
 }
