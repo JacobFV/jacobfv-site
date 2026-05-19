@@ -16,6 +16,8 @@ links:
 - Treats cross-domain forecasting as structured latent inference over macro, financial, political, narrative, and firm-level state
 
 
+## Overview
+
 `general-unified-world-modeling` takes the abstraction from `canvas-engineering` and pushes it outward from "how should a model think?" to "what should a model think about?"
 
 The repository describes a typed causal ontology of civilization: markets, macroeconomics, politics, narratives, resources, firms, individuals, interventions, and forecasts all become fields in a single structured schema. In the current version that schema spans 857 fields across 19 layers and multiple temporal frequency classes.
@@ -23,6 +25,8 @@ The repository describes a typed causal ontology of civilization: markets, macro
 <p align="center">
   <img src="https://raw.githubusercontent.com/JacobFV/general-unified-world-modeling/develop/docs/assets/canvas_full_world.png" alt="Full world model canvas" width="100%"/>
 </p>
+
+## Projection and partial supervision
 
 The most important design idea here is not just scale. It is projection. Rather than requiring every dataset to populate every field, the model can be projected down to the slice of the ontology a user actually cares about, then trained with masked supervision over heterogeneous data. That makes the system feel less like a monolithic all-knowing model and more like a reusable world schema that different applications can compile into their own view.
 

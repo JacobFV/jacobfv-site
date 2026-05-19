@@ -12,12 +12,12 @@ hero:
 links: 
   demo: "https://jacobfvaldez.weebly.com/engineering.html#cookiebaker_3d_printer"
 ---
+
 - Learned mechanical engineering basics
 - Intended to make a 3D printer, but extruder never added
 - Re-attempted project in October 2014 with design modifications
 
-
-Outcomes:
+## Outcomes
 
 - 36"×36" sheet metal CNC (without cutting tool) with server and client control systems
 - Became significantly more fluent in C#
@@ -26,15 +26,16 @@ Outcomes:
 - Engineered basic Arduino CNC controller
 - Wrote serial client featuring optimized protocol
 
+## The Problem
+
 <div className="row justify-content-sm-center">
     <div className="col-sm-8 mt-3 mt-md-0">
         This project started with the objective of making a 2&times;2 plasma cutter. You see, until then, I had been painstakingly hacksawing all my sheet metal, and I probabbly broke 3 or more cutting blades each day in the process. It seemed like a no-brainer then to automate this process... or so I thought.
     </div>
     <div className="col-sm-4 mt-3 mt-md-0">
-        <img className="img-fluid rounded z-depth-1" src="" alt="" title="example image"/>
+        <img className="img-fluid rounded z-depth-1" src="/img/migrated/cc_problem.jpg" alt="The hacksawing problem" title="The hacksawing problem"/>
     </div>
 </div>
-<div className="caption"></div>
 
 I quickly began deciding objectives. PDFs started piling up on material science, electrical engineering, mechanotronics, programming, and gcode. For the first month, I spent much of my time in school taking notes, formulating designs, and drafting parts. It's so easy to get tempted to plan out every millimeter of a machine.
 
@@ -42,13 +43,13 @@ Finally, I settled on an _acceptable_ design and began construction. At this poi
 
 <div className="row">
     <div className="col-sm mt-3 mt-md-0">
-        <img className="img-fluid rounded z-depth-1" src="" alt="" title="CookieCutter mechanotronics"/>
+        <img className="img-fluid rounded z-depth-1" src="/img/migrated/cc_0.jpg" alt="CookieCutter mechanotronics" title="CookieCutter mechanotronics"/>
     </div>
     <div className="col-sm mt-3 mt-md-0">
-        <img className="img-fluid rounded z-depth-1" src="" alt="" title="CookieCutter electronics"/>
+        <img className="img-fluid rounded z-depth-1" src="/img/migrated/cc_2.jpg" alt="CookieCutter electronics" title="CookieCutter electronics"/>
     </div>
     <div className="col-sm mt-3 mt-md-0">
-        <img className="img-fluid rounded z-depth-1" src="" alt="" title="CookieCutter mechanotronics"/>
+        <img className="img-fluid rounded z-depth-1" src="/img/migrated/cc_1.jpg" alt="CookieCutter mechanotronics" title="CookieCutter mechanotronics"/>
     </div>
 </div>
 <div className="caption">
@@ -60,11 +61,11 @@ It's hard to maintain a crazy level of involvement for long without losing some 
 In honor of an attempted 3D printer, the Cookie Baker, I named this machine the Cookie Cutter. This system has all the bare-bones you would expect from a sheet metal cutting CNC except for an actual working cutting head. It uses CookieWare to read SVG files, an Arduino Mega with CookieWare Client to buffer serial input and make appropriate movements, and a threadscrew XY table. Check out the CookieCutter's Github repos for [server](https://github.com/JacobFV/CookieControl) and [client](https://github.com/JacobFV/Arduino-CookieControl) code.
 
 <div className="row">
-    <img className="img-fluid rounded z-depth-1" src="" alt="" title="Final CookieCutter"/>
+    <img className="img-fluid rounded z-depth-1" src="/img/migrated/cc_3.jpg" alt="Final CookieCutter" title="Final CookieCutter"/>
     <div className="col-sm mt-3 mt-md-0">
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/dyWwv9mZEvk?start=61" title="YouTube video player" frameborder="0" className="z-depth-1 rounded" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/dyWwv9mZEvk?start=61" title="YouTube video player" frameBorder="0" className="z-depth-1 rounded" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
     </div>
-    <img className="img-fluid rounded z-depth-1" src="" alt="" title="Cookie Control"/>
+    <img className="img-fluid rounded z-depth-1" src="/img/migrated/cookie_control.png" alt="Cookie Control" title="Cookie Control"/>
 </div>
 <div className="caption">
     Final CookieCutter (left), mock product-release video (center), and CookieControl (right)

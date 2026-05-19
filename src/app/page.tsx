@@ -136,24 +136,48 @@ export default function HomePage() {
     events: recentEvents.map(toOrbiter("event")),
   };
 
-  // Project planetoids — the projects after the top 2 (which are the
-  // close-orbit ones in OrbitDecor) become drifting planetoids around
-  // the pfp. Each carries up to 2 moons pulled from its edge
-  // neighborhood. Hand-tuned drift positions read clockwise from the
-  // upper-left.
-  const planetSlots: Array<Omit<Parameters<typeof Planetoids>[0]["planets"][number], "id" | "title" | "lane" | "kind" | "asset" | "moons">> = [
-    { cx: -320, cy: -150, ax: 22, ay: 18, wx: 0.16, wy: 0.11, px: 0.0, py: 1.4, size: 38 },
-    { cx:  340, cy: -130, ax: 20, ay: 22, wx: 0.13, wy: 0.18, px: 0.8, py: 0.3, size: 36 },
-    { cx:  300, cy:   80, ax: 24, ay: 16, wx: 0.10, wy: 0.14, px: 2.1, py: 2.7, size: 34 },
-    { cx: -300, cy:   60, ax: 18, ay: 20, wx: 0.18, wy: 0.12, px: 3.4, py: 0.9, size: 32 },
+  // Planetoid slots — drifting bodies around the pfp. We pull from
+  // multiple kinds (not just projects) so the home feels like a system,
+  // not a project list. Each carries up to 2 moons from its edge
+  // neighborhood. Position is hand-tuned; cy mostly stays negative so
+  // planets sit above the name/intro content below the pfp.
+  type PlanetSource = { kind: "project" | "post" | "friend" | "event" | "skill"; rank: number };
+  const planetSlots: Array<{
+    source: PlanetSource;
+    cx: number; cy: number; ax: number; ay: number;
+    wx: number; wy: number; px: number; py: number; size: number;
+  }> = [
+    // Inner ring — closer to the pfp, smaller bodies.
+    { source: { kind: "project", rank: 2 }, cx: -290, cy: -120, ax: 20, ay: 16, wx: 0.16, wy: 0.11, px: 0.0, py: 1.4, size: 38 },
+    { source: { kind: "project", rank: 3 }, cx:  300, cy: -110, ax: 18, ay: 20, wx: 0.13, wy: 0.18, px: 0.8, py: 0.3, size: 36 },
+    { source: { kind: "post",    rank: 0 }, cx:    0, cy: -320, ax: 22, ay: 14, wx: 0.10, wy: 0.16, px: 2.4, py: 1.0, size: 30 },
+    { source: { kind: "post",    rank: 1 }, cx: -240, cy: -260, ax: 16, ay: 18, wx: 0.18, wy: 0.10, px: 3.6, py: 2.2, size: 28 },
+    // Outer ring — farther out, varied kinds.
+    { source: { kind: "project", rank: 4 }, cx:  360, cy:   30, ax: 22, ay: 18, wx: 0.10, wy: 0.14, px: 2.1, py: 2.7, size: 34 },
+    { source: { kind: "project", rank: 5 }, cx: -360, cy:   10, ax: 18, ay: 22, wx: 0.18, wy: 0.12, px: 3.4, py: 0.9, size: 32 },
+    { source: { kind: "event",   rank: 0 }, cx:  260, cy: -280, ax: 18, ay: 14, wx: 0.12, wy: 0.20, px: 1.6, py: 0.4, size: 28 },
+    { source: { kind: "event",   rank: 1 }, cx:  220, cy:  220, ax: 14, ay: 16, wx: 0.15, wy: 0.13, px: 0.3, py: 3.0, size: 26 },
+    { source: { kind: "friend",  rank: 0 }, cx: -220, cy:  220, ax: 14, ay: 16, wx: 0.17, wy: 0.09, px: 2.7, py: 1.8, size: 26 },
+    { source: { kind: "skill",   rank: 0 }, cx:   80, cy:  280, ax: 14, ay: 12, wx: 0.20, wy: 0.16, px: 4.5, py: 2.5, size: 24 },
   ];
-  const planets = featured.slice(2, 2 + planetSlots.length).map((p, i) => {
-    const slot = planetSlots[i];
-    // Up to 2 neighbors, preferring the project's outbound edges.
+
+  const sourcePool: Record<PlanetSource["kind"], Node[]> = {
+    project: featured.slice(2), // first 2 are in the tight orbit
+    post: recentPosts,
+    friend: featuredFriends,
+    event: recentEvents,
+    skill: featuredSkills,
+  };
+
+  const planets = planetSlots.flatMap((slot, i) => {
+    const node = sourcePool[slot.source.kind]?.[slot.source.rank];
+    if (!node) return [];
+    // Up to 2 neighbors, preferring outbound edges. The wider this net,
+    // the noisier — keep it tight so moons look related, not random.
     const neighborIds = graph
-      .neighbors(p.id)
-      .map((e) => (e.source === p.id ? e.target : e.source))
-      .filter((id) => id !== p.id);
+      .neighbors(node.id)
+      .map((e) => (e.source === node.id ? e.target : e.source))
+      .filter((id) => id !== node.id);
     const moonNodes = Array.from(new Set(neighborIds))
       .map((id) => graph.byId.get(id))
       .filter((n): n is Node => Boolean(n))
@@ -164,19 +188,22 @@ export default function HomePage() {
       lane: m.lane,
       kind: m.kind,
       asset: m.orbitAsset,
-      r: 28 + j * 10,
+      r: 26 + j * 10,
       w: 0.55 + j * 0.15 * (j % 2 === 0 ? 1 : -1),
       phase: (j * Math.PI) / 2 + i * 0.7,
     }));
-    return {
-      id: p.id,
-      title: p.title,
-      lane: p.lane,
-      kind: p.kind,
-      asset: p.orbitAsset,
-      moons,
-      ...slot,
-    };
+    const { source: _src, ...slotPos } = slot;
+    return [
+      {
+        id: node.id,
+        title: node.title,
+        lane: node.lane,
+        kind: node.kind,
+        asset: node.orbitAsset,
+        moons,
+        ...slotPos,
+      },
+    ];
   });
 
   const searchable = nodes.map((n) => ({

@@ -16,6 +16,8 @@ links:
 - Frames multimodal diffusion as typed latent computation rather than flat token processing
 
 
+## Overview
+
 `canvas-engineering` is the clearest expression on this site of a recurring idea in my work: models get easier to steer when their internal spaces are given structure instead of being treated as undifferentiated tensors.
 
 The core move is simple. Instead of asking a diffusion transformer to discover on its own which latent positions should represent vision, action, reward, proprioception, or thought, you declare that layout directly. The layout becomes the schema, the topology becomes the compute graph, and the resulting model behaves more like a typed program than a bag of embeddings.
@@ -25,6 +27,8 @@ That view matters because it makes multimodal world models compositional. Differ
 <p align="center">
   <img src="https://raw.githubusercontent.com/JacobFV/canvas-engineering/main/assets/canvas_layouts_combined.png" alt="Canvas engineering layouts" width="100%"/>
 </p>
+
+## Looped attention
 
 The second idea in the project is `looped attention`: reusing transformer blocks across multiple learned iterations. In the current writeup, that is framed less as "reasoning depth" and more as a weight-sharing regularizer that makes frozen backbones substantially more parameter-efficient. That pairing is what makes the project interesting to me: one part is about giving latent space semantics, and the other is about making the compute over that space cheaper and more reusable.
 
