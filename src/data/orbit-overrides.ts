@@ -17,10 +17,14 @@ export type OrbitOverride = {
 };
 
 export const ORBIT_OVERRIDES: Record<string, OrbitOverride> = {
-  // The one live embed — windows-web's deployed front-end. Iframe is
-  // scaled hard inside the 36px orbiter so the whole desktop reads as a
-  // tiny moving thumbnail; click sends the user to /projects/windows-web.
+  // Live iframe embeds — scaled hard inside the 36px orbiter so the
+  // whole deployed app reads as a tiny moving thumbnail. Click sends
+  // the user to the project page.
   "windows-web": { embed: "https://windows-web-next.vercel.app" },
+  "macos-web-next": { embed: "https://macos-web-next.vercel.app" },
+  "browser-os": { embed: "https://desktop-shell.vercel.app" },
+  "ascii-art": { embed: "https://ascii-art-sable.vercel.app" },
+  "standup-ai": { embed: "https://standup-ai-khaki.vercel.app" },
 
   // ---- Projects ----
   "limboid": { asset: "/img/migrated/limboid-takes-over-room.jpeg" },

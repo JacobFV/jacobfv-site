@@ -41,7 +41,16 @@ function pickFeatured(nodes: Node[]): Node[] {
     (n) => n.kind === "project" && (n.status === "active" || n.status === "shipped"),
   );
   // Manual override — pin a few load-bearing ones to the top regardless of date.
-  const pinned = ["windows-web", "computatrum", "limboid", "jacobfv-site", "canvas-engineering"];
+  const pinned = [
+    // Orbit slots (rank 0–1) — both live iframe embeds.
+    "windows-web",
+    "macos-web-next",
+    // Planetoid slots (rank 2–5) — drift around the pfp with moons.
+    "limboid",
+    "computatrum",
+    "jacobfv-site",
+    "canvas-engineering",
+  ];
   const pinnedNodes = pinned
     .map((id) => candidates.find((n) => n.id === id))
     .filter((n): n is Node => Boolean(n));

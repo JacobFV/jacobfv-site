@@ -72,9 +72,13 @@ function KindMeta({ node }: { node: Node }) {
 
 function ProjectMeta({ node }: { node: Node }) {
   const hasLinks = node.links && Object.keys(node.links).length > 0;
-  if (!hasLinks && !node.video) return null;
+  if (!hasLinks && !node.video && !node.orbitEmbed) return null;
   return (
     <div className="mt-5 flex flex-col gap-5">
+      {/* Live deploy embed — only set in orbit-overrides for URLs we
+          know iframe cleanly. Renders above the demo video when both
+          exist, since live > recorded. */}
+      {node.orbitEmbed && <ProjectLiveEmbed url={node.orbitEmbed} title={node.title} />}
       {node.video && <ProjectVideo url={node.video} title={node.title} />}
       {hasLinks && (
         <div className="flex flex-wrap gap-3 font-[family-name:var(--font-mono)] text-xs">
@@ -93,6 +97,24 @@ function ProjectMeta({ node }: { node: Node }) {
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+function ProjectLiveEmbed({ url, title }: { url: string; title: string }) {
+  return (
+    <div
+      className="relative w-full overflow-hidden rounded-2xl bg-[var(--color-bg-1)]"
+      style={{ aspectRatio: "16 / 10" }}
+    >
+      <iframe
+        src={url}
+        title={`${title} — live demo`}
+        loading="lazy"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+        className="absolute inset-0 h-full w-full"
+        style={{ border: 0 }}
+      />
     </div>
   );
 }
