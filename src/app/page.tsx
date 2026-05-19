@@ -296,7 +296,7 @@ function Section({
   );
 }
 
-function ProjectCard({ node }: { node: Node }) {
+function ProjectListItem({ node }: { node: Node }) {
   const status = node.status ?? "active";
   return (
     <Link
