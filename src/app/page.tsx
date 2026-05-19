@@ -91,8 +91,35 @@ export default function HomePage() {
             type="text"
             placeholder="Ask me anything!"
             aria-label="Ask me anything"
-            className="mt-8 w-full max-w-xl rounded-full border border-[var(--color-bg-2)] bg-[var(--color-bg-1)] px-5 py-3 text-base text-[var(--color-ink)] placeholder:text-[var(--color-ink-mute)] focus:border-[var(--color-accent)] focus:outline-none"
+            className="mt-8 w-full max-w-xl rounded-full bg-[var(--color-bg-1)] px-5 py-3.5 text-base text-[var(--color-ink)] shadow-[0_1px_2px_rgba(0,0,0,0.25),0_0_0_1px_rgba(255,255,255,0.04)_inset] outline-none placeholder:text-[var(--color-ink-mute)] focus:shadow-[0_1px_2px_rgba(0,0,0,0.25),0_0_0_1px_var(--color-accent)_inset]"
           />
+
+          <div className="mt-5 flex flex-wrap justify-center gap-2 font-[family-name:var(--font-mono)] text-xs">
+            <Link
+              href="/graph"
+              className="rounded-full bg-[var(--color-bg-1)] px-4 py-1.5 text-[var(--color-ink)] no-underline shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset] hover:bg-[var(--color-bg-2)] hover:text-[var(--color-accent)]"
+            >
+              explore as a graph →
+            </Link>
+            <Link
+              href="/t"
+              className="rounded-full bg-[var(--color-bg-1)] px-4 py-1.5 text-[var(--color-ink-dim)] no-underline shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset] hover:bg-[var(--color-bg-2)] hover:text-[var(--color-accent)]"
+            >
+              timeline
+            </Link>
+            <Link
+              href="/loop"
+              className="rounded-full bg-[var(--color-bg-1)] px-4 py-1.5 text-[var(--color-ink-dim)] no-underline shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset] hover:bg-[var(--color-bg-2)] hover:text-[var(--color-accent)]"
+            >
+              /loop — book notes
+            </Link>
+            <Link
+              href="/resume"
+              className="rounded-full bg-[var(--color-bg-1)] px-4 py-1.5 text-[var(--color-ink-dim)] no-underline shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset] hover:bg-[var(--color-bg-2)] hover:text-[var(--color-accent)]"
+            >
+              resume
+            </Link>
+          </div>
 
           <p className="mt-10 max-w-2xl text-left text-lg leading-[1.65] text-[var(--color-ink-dim)]">
             Currently building{" "}
@@ -119,46 +146,21 @@ export default function HomePage() {
             Arlington. I love science and engineering and people — this site maps the arguments
             behind the work.
           </p>
-
-          <div className="mt-8 flex flex-wrap justify-center gap-2 font-[family-name:var(--font-mono)] text-xs">
-            <Link
-              href="/graph"
-              className="rounded-full border border-[var(--color-bg-2)] px-4 py-1.5 text-[var(--color-ink)] no-underline hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
-            >
-              explore as a graph →
-            </Link>
-            <Link
-              href="/t"
-              className="rounded-full border border-[var(--color-bg-2)] px-4 py-1.5 text-[var(--color-ink-dim)] no-underline hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
-            >
-              timeline
-            </Link>
-            <Link
-              href="/loop"
-              className="rounded-full border border-[var(--color-bg-2)] px-4 py-1.5 text-[var(--color-ink-dim)] no-underline hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
-            >
-              /loop — book notes
-            </Link>
-            <Link
-              href="/resume"
-              className="rounded-full border border-[var(--color-bg-2)] px-4 py-1.5 text-[var(--color-ink-dim)] no-underline hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
-            >
-              resume
-            </Link>
-          </div>
         </section>
 
         {/* ---- Featured projects ---- */}
         <Section
           eyebrow="Selected work"
-          title="What I'm building"
+          title="Active Threads:"
           link={{ href: "/list", label: "every project →" }}
         >
-          <div className="grid gap-4 sm:grid-cols-2">
+          <ul className="flex flex-col gap-2">
             {featured.map((n) => (
-              <ProjectCard key={n.id} node={n} />
+              <li key={n.id}>
+                <ProjectListItem node={n} />
+              </li>
             ))}
-          </div>
+          </ul>
         </Section>
 
         {/* ---- Recent posts ---- */}
