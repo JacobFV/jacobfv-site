@@ -7,56 +7,43 @@ import rawPapers from "../../.velite/papers.json";
 import rawPosts from "../../.velite/posts.json";
 import rawProjects from "../../.velite/projects.json";
 import rawReadings from "../../.velite/readings.json";
+import rawUpdates from "../../.velite/updates.json";
+import rawSkills from "../../.velite/skills.json";
+import rawFriends from "../../.velite/friends.json";
+import rawEvents from "../../.velite/events.json";
 import rawVisions from "../../.velite/visions.json";
 import { manualEdges } from "@/data/edges";
-import type { ManualEdge } from "../../velite.config";
+import { ORBIT_OVERRIDES } from "@/data/orbit-overrides";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 
-export type NodeKind = "post" | "project" | "paper" | "reading" | "vision" | "experience";
-export type Lane = "research" | "building" | "writing" | "personal";
-export type EdgeKind = ManualEdge["kind"];
-export type Edge = ManualEdge;
+export * from "./graph-types";
+import type {
+  Edge,
+  EventStatus,
+  EventType,
+  Graph,
+  Lane,
+  Node,
+  NodeKind,
+  ProjectStatus,
+  ReadingStatus,
+  ReadingWorkType,
+  SkillLevel,
+  UpdateEmbed,
+  UpdateType,
+} from "./graph-types";
 
-export type ProjectStatus = "idea" | "active" | "shipped" | "shelved";
-export type ReadingStatus = "queued" | "reading" | "finished" | "paused" | "reference";
-export type ReadingWorkType = "book" | "paper" | "article" | "course" | "other";
+const ORBIT_IMG_DIR = "public/img/orbiters";
+const ORBIT_EXTS = ["png", "jpg", "jpeg", "webp", "svg"] as const;
 
-export type Node = {
-  id: string;
-  slug: string;
-  kind: NodeKind;
-  title: string;
-  date: string;
-  endDate?: string;
-  lane: Lane;
-  tags: string[];
-  summary: string;
-  body: string;
-  hero?: { src: string; alt: string };
-  influences: string[];
-  realizes: string[];
-  critiques: string[];
-
-  // kind-specific (all optional on the union)
-  status?: ProjectStatus;
-  links?: Record<string, string | undefined>;
-  authors?: string[];
-  venue?: string;
-  bibKey?: string;
-  pdf?: string;
-  workType?: ReadingWorkType;
-  readingStatus?: ReadingStatus;
-  source?: string;
-  url?: string;
-  sceneId?: string;
-  org?: string;
-};
-
-export type Graph = {
-  nodes: Node[];
-  edges: Edge[];
-  byId: Map<string, Node>;
-  neighbors: (id: string) => Edge[];
-};
+function resolveOrbitFsAsset(id: string): string | undefined {
+  for (const ext of ORBIT_EXTS) {
+    const rel = `${ORBIT_IMG_DIR}/${id}.${ext}`;
+    if (existsSync(join(process.cwd(), rel))) return `/img/orbiters/${id}.${ext}`;
+  }
+  return undefined;
+}
 
 const slugBase = (p: string) => p.split("/").pop() ?? p;
 
@@ -107,6 +94,17 @@ const toNode =
       readingStatus: kind === "reading" ? (extra.status as ReadingStatus | undefined) : undefined,
       source: extra.source as string | undefined,
       url: extra.url as string | undefined,
+      updateType: extra.updateType as UpdateType | undefined,
+      embed: extra.embed as UpdateEmbed | undefined,
+      category: extra.category as string | undefined,
+      level: extra.level as SkillLevel | undefined,
+      tools: extra.tools as string[] | undefined,
+      evidence: extra.evidence as string[] | undefined,
+      relation: extra.relation as string | undefined,
+      eventType: extra.eventType as EventType | undefined,
+      eventStatus: kind === "event" ? (extra.status as EventStatus | undefined) : undefined,
+      role: extra.role as string | undefined,
+      location: extra.location as string | undefined,
       sceneId: extra.sceneId as string | undefined,
       org: extra.org as string | undefined,
     };
@@ -122,6 +120,10 @@ export function getGraph(): Graph {
     ...asCollection(rawProjects).map(toNode("project")),
     ...asCollection(rawPapers).map(toNode("paper")),
     ...asCollection(rawReadings).map(toNode("reading")),
+    ...asCollection(rawUpdates).map(toNode("update")),
+    ...asCollection(rawSkills).map(toNode("skill")),
+    ...asCollection(rawFriends).map(toNode("friend")),
+    ...asCollection(rawEvents).map(toNode("event")),
     ...asCollection(rawVisions).map(toNode("vision")),
     ...asCollection(rawExperience).map(toNode("experience")),
   ];
@@ -133,6 +135,11 @@ export function getGraph(): Graph {
         `Duplicate node id "${n.id}" — slugs must be unique across all content folders.`,
       );
     }
+    // Manifest override > filesystem asset > nothing. Embeds are
+    // manifest-only since they involve trusting an external URL.
+    const override = ORBIT_OVERRIDES[n.id];
+    n.orbitAsset = override?.asset ?? resolveOrbitFsAsset(n.id);
+    n.orbitEmbed = override?.embed;
     byId.set(n.id, n);
   }
 
@@ -181,4 +188,10 @@ export function getGraph(): Graph {
     neighbors: (id) => adjacency.get(id) ?? [],
   };
   return cached;
+}
+
+export function getLatestUpdate(nodes = getGraph().nodes): Node | null {
+  return (
+    nodes.filter((n) => n.kind === "update").sort((a, b) => (a.date < b.date ? 1 : -1))[0] ?? null
+  );
 }

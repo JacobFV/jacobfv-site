@@ -12,7 +12,7 @@ I want you to implement the Next.js rewrite of my personal site.
 
 **Context.** Two sibling directories matter:
 
-- `~/Code/jacobfv.github.io/` — the current Jekyll/al-folio site. Source of all content (posts, projects, bio essays, papers, the "a-beautiful-loop" book draft). Do not modify it. Treat it as a read-only content archive.
+- `~/Code/jacobfv.github.io/` — the archived Jekyll/al-folio site. Historical source material only. Do not modify it.
 - `~/Code/jacobfv-site/` — the new repo. Currently empty of code but fully scaffolded with directory structure, configs, and design docs. This is where you will work.
 
 **Read these first, in order.** They are not boilerplate; they encode the design.
@@ -27,7 +27,7 @@ Also skim:
 
 - `~/Code/jacobfv-site/package.json` — declared dependencies. Use these versions; add to them only if necessary.
 - `~/Code/jacobfv-site/velite.config.ts` — the content schema, already wired.
-- `~/Code/jacobfv.github.io/_pages/`, `_posts/`, `_projects/`, `_bio/`, `_bibliography/` — content to migrate later.
+- `~/Code/jacobfv.github.io/_pages/`, `_posts/`, `_projects/`, `_bio/`, `_bibliography/` — historical source material if you need to check an old page.
 
 **How to work.**
 
@@ -42,7 +42,7 @@ Also skim:
 
 **Phase 1 specifics — start here.**
 
-Goal: `pnpm dev` boots the app, reads MDX from `content/`, lists nodes at `/`, renders any node at `/[slug]`. No graph, no animation. Three sample MDX files in each `content/` subfolder so the layout has things to render — write them yourself, brief and plausible (you can echo themes from the existing `_bio/focus-statement.md` and a couple of `_projects/*.md` for sample content, but do not migrate the full set yet).
+Goal: `pnpm dev` boots the app, reads MDX from `content/`, lists nodes at `/`, renders any node at `/[slug]`. No graph, no animation. Three sample MDX files in each `content/` subfolder so the layout has things to render — write them yourself, brief and plausible.
 
 Concretely for Phase 1:
 
@@ -52,7 +52,7 @@ Concretely for Phase 1:
 4. Create `src/app/layout.tsx`, `src/app/globals.css` (Tailwind v4 with the design tokens from DESIGN.md as `@theme` CSS variables), and the Fraunces / Inter / JetBrains Mono fonts via `next/font`.
 5. `src/app/page.tsx` — plain `<ul>` of every node, sorted by date desc, linking to `/[slug]`.
 6. `src/app/[slug]/page.tsx` — looks up the node by id, renders title + summary + MDX body. Polymorphic on `kind` is fine to leave for Phase 4; for now any kind renders the same template.
-7. Three sample MDX files in each of `content/posts/`, `content/projects/`, `content/papers/`, `content/visions/`, `content/experience/`, plus `content/now/index.mdx`.
+7. Three sample MDX files in each of `content/posts/`, `content/projects/`, `content/papers/`, `content/visions/`, `content/experience/`, plus durable update nodes in `content/updates/`.
 8. `pnpm typecheck && pnpm build` both pass.
 
 Stop after Phase 1, summarize what you built, and ask before starting Phase 2.

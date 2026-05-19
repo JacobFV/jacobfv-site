@@ -86,6 +86,93 @@ const readings = defineCollection({
     .transform((d) => ({ ...d, kind: "reading" as const })),
 });
 
+const updates = defineCollection({
+  name: "Update",
+  pattern: "updates/**/*.mdx",
+  schema: s
+    .object({
+      ...baseFields,
+      slug: s.path(),
+      updateType: s.enum(["note", "x-post", "link", "embed"]).default("note"),
+      url: s.string().optional(),
+      embed: s
+        .object({
+          kind: s.enum(["x", "url", "html"]).default("url"),
+          url: s.string().optional(),
+          html: s.string().optional(),
+          alt: s.string().optional(),
+        })
+        .optional(),
+    })
+    .transform((d) => ({ ...d, kind: "update" as const })),
+});
+
+const skills = defineCollection({
+  name: "Skill",
+  pattern: "skills/**/*.mdx",
+  schema: s
+    .object({
+      ...baseFields,
+      slug: s.path(),
+      category: s.string(),
+      level: s.enum(["working", "strong", "expert"]).default("strong"),
+      tools: s.array(s.string()).default([]),
+      evidence: s.array(s.string()).default([]),
+    })
+    .transform((d) => ({ ...d, kind: "skill" as const })),
+});
+
+const friends = defineCollection({
+  name: "Friend",
+  pattern: "friends/**/*.mdx",
+  schema: s
+    .object({
+      ...baseFields,
+      slug: s.path(),
+      relation: s.string().optional(),
+      location: s.string().optional(),
+      links: s
+        .object({
+          website: s.string().optional(),
+          x: s.string().optional(),
+          github: s.string().optional(),
+          linkedin: s.string().optional(),
+        })
+        .optional(),
+    })
+    .transform((d) => ({ ...d, kind: "friend" as const })),
+});
+
+const events = defineCollection({
+  name: "Event",
+  pattern: "events/**/*.mdx",
+  schema: s
+    .object({
+      ...baseFields,
+      slug: s.path(),
+      eventType: s
+        .enum([
+          "conference",
+          "meetup",
+          "talk",
+          "workshop",
+          "hackathon",
+          "travel",
+          "launch",
+          "other",
+        ])
+        .default("other"),
+      status: s
+        .enum(["upcoming", "attended", "presented", "hosted", "cancelled"])
+        .default("attended"),
+      role: s.string().optional(),
+      venue: s.string().optional(),
+      location: s.string().optional(),
+      url: s.string().optional(),
+    })
+    .transform((d) => ({ ...d, kind: "event" as const })),
+});
+
 const visions = defineCollection({
   name: "Vision",
   pattern: "visions/**/*.mdx",
@@ -128,21 +215,6 @@ const loop = defineCollection({
     .transform((d) => ({ ...d, kind: "loop" as const })),
 });
 
-const now = defineCollection({
-  name: "Now",
-  pattern: "now/index.mdx",
-  single: true,
-  schema: s.object({
-    updated: s.isodate(),
-    building: s.string(),
-    reading: s.string().optional(),
-    body: s.mdx({
-      copyLinkedFiles: false,
-      remarkPlugins: [remarkGfm, remarkMath],
-    }),
-  }),
-});
-
 export default defineConfig({
   root: "content",
   output: {
@@ -152,7 +224,19 @@ export default defineConfig({
     name: "[name]-[hash:6].[ext]",
     clean: true,
   },
-  collections: { posts, projects, papers, readings, visions, experience, loop, now },
+  collections: {
+    posts,
+    projects,
+    papers,
+    readings,
+    updates,
+    skills,
+    friends,
+    events,
+    visions,
+    experience,
+    loop,
+  },
 });
 
 // Type for hand-curated edges, used in src/data/edges.ts.

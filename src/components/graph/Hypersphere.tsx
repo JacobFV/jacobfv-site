@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Html, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
-import type { Edge, Lane, Node } from "@/lib/graph";
+import { nodeHref, type Edge, type Lane, type Node } from "@/lib/graph-types";
 
 type LiteNode = Omit<Node, "body">;
 
@@ -301,7 +301,7 @@ function Tooltip({
         {node.summary}
       </p>
       <Link
-        href={`/${node.id}`}
+        href={nodeHref(node)}
         style={{
           fontFamily: "var(--font-mono)",
           fontSize: 11,

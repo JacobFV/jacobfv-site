@@ -21,21 +21,9 @@ Deliverables:
 
 Definition of done: ship to a Vercel preview URL.
 
-## Phase 2 — Migration (1 day)
+## Phase 2 — Content import (done)
 
-Goal: pull all content from `../jacobfv.github.io` into `content/` so subsequent phases have real material.
-
-Deliverables:
-
-- `scripts/migrate-jekyll.ts` runnable via `pnpm migrate`.
-- Reads from `../jacobfv.github.io/_posts/`, `_projects/`, `_bio/`, `_pages/`, `_bibliography/`.
-- Maps Jekyll frontmatter → CONTENT_MODEL.md schema.
-- Copies images to `public/img/migrated/`.
-- Rewrites internal links.
-- Does NOT fill `influences`/`realizes`/`critiques` — those are hand-curated later.
-- Output committed; script kept for re-runs but not part of CI.
-
-Definition of done: every existing post and project resolves at `/[slug]` after migration, even if visually plain.
+The old Jekyll material has been imported into `content/`. The one-off import helper is no longer part of the repo; new changes happen directly in MDX and graph edges are curated by hand.
 
 ## Phase 3 — Constellation (3–5 days)
 
@@ -55,7 +43,7 @@ Definition of done: a stranger can land on `/`, find the project they want, and 
 
 ## Phase 4 — Document mode + transitions (2–3 days)
 
-Goal: the magic — clicking a node animates *that card* into the document hero.
+Goal: the magic — clicking a node animates _that card_ into the document hero.
 
 Deliverables:
 
@@ -113,7 +101,7 @@ Definition of done: a visitor leaves the room understanding what you're building
 ## Phase 8 — Polish (ongoing)
 
 - Pagefind/Fuse search index built at build time.
-- `now` dock pulled from `content/now/index.mdx`.
+- latest update dock pulled from newest `content/updates/*.mdx` node.
 - Resume generated from experience nodes; PDF export.
 - OG image generation per node via `next/og`.
 - Lighthouse passes: 95+ across the board.
@@ -131,4 +119,4 @@ Definition of done: a visitor leaves the room understanding what you're building
 - Don't build a CMS.
 - Don't add SSR for anything that can be static.
 - Don't ship the 3D scene before phase 4. The transitions are the soul; 3D is the spice.
-- Don't try to migrate edges automatically. The relationships are the human work.
+- Don't infer edges automatically. The relationships are the human work.

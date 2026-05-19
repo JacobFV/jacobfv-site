@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Command } from "cmdk";
 import Fuse from "fuse.js";
-import type { Lane, NodeKind } from "@/lib/graph";
+import { nodeHref, type Lane, type NodeKind } from "@/lib/graph-types";
 
 type SearchableNode = {
   id: string;
@@ -152,7 +152,7 @@ export function CmdK({ nodes }: Props) {
                 <Command.Item
                   key={n.id}
                   value={`${n.title} ${n.tags.join(" ")} ${n.kind}`}
-                  onSelect={() => go(`/${n.id}`)}
+                  onSelect={() => go(nodeHref(n))}
                   style={
                     {
                       display: "flex",
@@ -209,7 +209,7 @@ export function CmdK({ nodes }: Props) {
                   const recent = [...nodes]
                     .filter((n) => n.kind === "post")
                     .sort((a, b) => (a.date < b.date ? 1 : -1))[0];
-                  if (recent) go(`/${recent.id}`);
+                  if (recent) go(nodeHref(recent));
                 }}
               />
               <ActionItem
@@ -218,13 +218,23 @@ export function CmdK({ nodes }: Props) {
                   const recent = [...nodes]
                     .filter((n) => n.kind === "reading")
                     .sort((a, b) => (a.date < b.date ? 1 : -1))[0];
-                  if (recent) go(`/${recent.id}`);
+                  if (recent) go(nodeHref(recent));
                 }}
               />
               <ActionItem label="Open the constellation" onSelect={() => go("/graph")} />
               <ActionItem label="Back to portfolio home" onSelect={() => go("/")} />
+              <ActionItem label="Browse events" onSelect={() => go("/events")} />
               <ActionItem label="Switch to timeline" onSelect={() => go("/t")} />
-              <ActionItem label="Open the now dock" onSelect={() => go("/now")} />
+              <ActionItem
+                label="Open latest update"
+                onSelect={() => {
+                  const recent = [...nodes]
+                    .filter((n) => n.kind === "update")
+                    .sort((a, b) => (a.date < b.date ? 1 : -1))[0];
+                  if (recent) go(nodeHref(recent));
+                  else go("/updates");
+                }}
+              />
             </Command.Group>
           </Command.List>
         </Command>

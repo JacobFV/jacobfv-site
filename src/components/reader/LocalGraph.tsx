@@ -8,6 +8,7 @@ import Link from "next/link";
 import { computeForceLayout } from "@/lib/layout";
 import {
   getGraph,
+  nodeHref,
   type Edge,
   type EdgeKind,
   type Lane,
@@ -109,7 +110,7 @@ export function LocalGraph({ focusId }: { focusId: string }) {
   const twoCount = Array.from(rings.values()).filter((r) => r === 2).length;
 
   return (
-    <section className="mt-16 border-t border-[var(--color-bg-2)] pt-8">
+    <section className="mt-16 border-t border-[var(--color-bg-2)]/50 pt-8">
       <div className="mb-4 flex items-baseline justify-between">
         <div>
           <p className="font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.16em] text-[var(--color-ink-mute)]">
@@ -201,7 +202,7 @@ export function LocalGraph({ focusId }: { focusId: string }) {
               }
 
               return (
-                <a key={n.id} href={`/${n.id}`}>
+                <a key={n.id} href={nodeHref(n)}>
                   <circle
                     cx={p.x}
                     cy={p.y}

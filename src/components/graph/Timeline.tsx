@@ -11,7 +11,7 @@ import {
 import "@xyflow/react/dist/base.css";
 import { NodeCard, type NodeCardData } from "./NodeCard";
 import { CustomEdge, type EdgeStyleData } from "./CustomEdge";
-import type { Edge, Lane, Node, ProjectStatus } from "@/lib/graph";
+import { nodeHref, type Edge, type Lane, type Node, type ProjectStatus } from "@/lib/graph-types";
 
 const LANES: Lane[] = ["research", "building", "writing", "personal"];
 const LANE_HEIGHT = 160;
@@ -463,7 +463,7 @@ function PinnedSummary({ node, onClose }: { node: Node; onClose: () => void }) {
         {node.summary}
       </p>
       <Link
-        href={`/${node.id}`}
+        href={nodeHref(node)}
         style={{
           fontFamily: "var(--font-mono)",
           fontSize: 11,

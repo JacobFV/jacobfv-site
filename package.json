@@ -11,7 +11,6 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "velite build && tsc --noEmit",
-    "migrate": "tsx scripts/migrate-jekyll.ts",
     "sync:assets": "tsx scripts/sync-assets.ts",
     "validate": "velite build && tsx scripts/validate-edges.ts",
     "format": "prettier --write ."
@@ -52,7 +51,6 @@
     "autoprefixer": "^10.4.0",
     "velite": "^0.2.0",
     "tsx": "^4.19.0",
-    "gray-matter": "^4.0.3",
     "prettier": "^3.3.0",
     "prettier-plugin-tailwindcss": "^0.6.0",
     "eslint": "^9.0.0",

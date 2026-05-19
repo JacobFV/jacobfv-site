@@ -2,7 +2,10 @@
 
 /*
  * Design tokens — see docs/DESIGN.md.
- * Dark-first. Lane colors are the only chromatic variation between nodes.
+ * Defaults are dark; light values are applied via :root[data-theme="light"].
+ * The pre-paint script in app/layout.tsx sets data-theme based on
+ * localStorage or system pref, so there is always exactly one active theme.
+ * Lane colors are the only chromatic variation between nodes.
  */
 @theme {
   --color-bg-0: #08090b;
@@ -12,6 +15,9 @@
   --color-ink-dim: #9097a3;
   --color-ink-mute: #5a6070;
   --color-accent: #ff6b35;
+  /* iOS-style call-accept green; used on the empty-state submit button
+     and the CallSheet CTA. Tuned slightly darker for light mode below. */
+  --color-phone: #22c55e;
 
   --color-lane-research: #6fa8dc;
   --color-lane-building: #93c47d;
@@ -23,10 +29,35 @@
   --font-display: var(--font-fraunces);
   --font-sans: var(--font-inter);
   --font-mono: var(--font-jetbrains);
+
+  /* Theme-aware elevation tokens. `--shadow-soft` is a tiny drop shadow,
+     `--ring-soft` a hairline inset border. Both flip with the active theme
+     so dark uses near-white insets and light uses near-ink insets. */
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --ring-soft: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
-:root {
+:root,
+:root[data-theme="dark"] {
   color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-bg-0: #fafaf8;
+  --color-bg-1: #f1f1ee;
+  --color-bg-2: #e3e3df;
+  --color-ink: #18181b;
+  --color-ink-dim: #54585f;
+  --color-ink-mute: #8a8f99;
+  --color-accent: #d8541c;
+  --color-phone: #16a34a;
+  --color-lane-research: #2f6cb0;
+  --color-lane-building: #4a8b34;
+  --color-lane-writing: #9a447b;
+  --color-lane-personal: #a87a1e;
+  --shadow-soft: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --ring-soft: inset 0 0 0 1px rgba(15, 23, 42, 0.06);
 }
 
 html,
@@ -116,6 +147,39 @@ a:hover {
 .prose-mdx hr {
   border: 0;
   border-top: 1px solid var(--color-bg-2);
+}
+
+/* ---- PfpReveal animations ---- */
+@keyframes pfp-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pfp-flip-in {
+  /* Card grows up from a smaller scale and rotates a half-turn so the
+     back face ends facing the camera. preserve-3d on the inner card
+     keeps both faces participating in the rotation. */
+  from {
+    transform: scale(0.55) rotateY(0deg);
+    opacity: 0.5;
+  }
+  to {
+    transform: scale(1) rotateY(180deg);
+    opacity: 1;
+  }
+}
+
+@keyframes pfp-label-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Card → document shared-element morph. The browser View Transitions

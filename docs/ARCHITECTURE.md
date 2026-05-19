@@ -25,10 +25,20 @@ Single source of truth: the merged `Graph`. Every view is a projection.
 
 ## Node model
 
-Six node kinds, all share a base:
+Ten node kinds, all share a base:
 
 ```ts
-type NodeKind = "post" | "project" | "paper" | "reading" | "vision" | "experience";
+type NodeKind =
+  | "post"
+  | "project"
+  | "paper"
+  | "reading"
+  | "update"
+  | "skill"
+  | "friend"
+  | "event"
+  | "vision"
+  | "experience";
 
 type Node = {
   id: string; // stable slug, used in URLs
@@ -76,7 +86,8 @@ App Router, no traditional page reloads — every "navigation" is a Framer Motio
 | `/[slug]`         | Node detail. Slug = node id. Polymorphic by `node.kind`. |
 | `/loop`           | A Beautiful Loop scrollytelling. Standalone layout.      |
 | `/loop/[chapter]` | Chapter routes within Loop.                              |
-| `/now`            | Full version of the corner dock.                         |
+| `/updates`        | Latest durable updates.                                  |
+| `/events`         | Conferences, talks, trips, launches, and upcoming plans. |
 | `/api/search`     | Client search index endpoint (or static JSON).           |
 
 The `(graph)` route group shares a single layout that mounts the graph canvas once, so switching `/` ↔ `/t` is a state change, not a remount. Opening a node from either view animates _into_ `/[slug]` without unmounting the graph (it slides to a minimap).

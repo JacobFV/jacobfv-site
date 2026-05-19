@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getGraph, type Node } from "@/lib/graph";
+import { getGraph, nodeHref, type Node } from "@/lib/graph";
 
 export const metadata = {
   title: "Resume · Jacob Valdez",
@@ -62,7 +62,7 @@ export default function ResumePage() {
                 </div>
                 <div>
                   <Link
-                    href={`/${n.id}`}
+                    href={nodeHref(n)}
                     className="block text-lg text-[var(--color-ink)] no-underline hover:text-[var(--color-accent)]"
                   >
                     {n.title}
@@ -94,7 +94,7 @@ export default function ResumePage() {
                 {fmt(n.date)}
               </div>
               <Link
-                href={`/${n.id}`}
+                href={nodeHref(n)}
                 className="text-[var(--color-ink)] no-underline hover:text-[var(--color-accent)]"
               >
                 {n.title}{" "}

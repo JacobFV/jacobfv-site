@@ -10,6 +10,10 @@ What every node looks like and how to write one.
 | `project`    | `content/projects/`   | A built thing — code, hardware, paper-grade research                     |
 | `paper`      | `content/papers/`     | Academic-style writeups; cites the bib                                   |
 | `reading`    | `content/readings/`   | Books, papers, courses, and articles being read or annotated             |
+| `update`     | `content/updates/`    | Durable status notes, X posts, links, and embedded updates               |
+| `skill`      | `content/skills/`     | Evidence-backed professional capabilities                                |
+| `friend`     | `content/friends/`    | Public friend/collaborator pages                                         |
+| `event`      | `content/events/`     | Conferences, talks, trips, launches, and upcoming plans                  |
 | `vision`     | `content/visions/`    | Bio-level statements: focus, 5-year outlook, "what makes AI interesting" |
 | `experience` | `content/experience/` | A role, residency, education entry                                       |
 
@@ -92,6 +96,91 @@ critiques: []
 ---
 ```
 
+### update
+
+```yaml
+---
+title: Reworking the site around durable updates
+date: 2026-05-19
+lane: building
+tags: [site, updates]
+summary: One-sentence summary of the update.
+updateType: x-post # note | x-post | link | embed
+url: https://x.com/...
+embed:
+  kind: x # x | url | html
+  url: https://x.com/...
+  alt: Accessible description of the embedded post or media.
+influences: [jacobfv-site]
+realizes: []
+critiques: []
+---
+```
+
+Embeds should preferably include `alt`, even when the embedded source also
+renders visually. Prefer `embed.kind: x` for X posts so the detail page can show
+the embedded-post form, with the alt text as a fallback.
+
+### skill
+
+```yaml
+---
+title: AI systems engineering
+date: 2026-05-19
+lane: building
+tags: [ai, systems]
+summary: Evidence-backed description of the capability.
+category: AI engineering
+level: expert # working | strong | expert
+tools: [Python, TypeScript, PyTorch]
+evidence: [computatrum, theagentsuite]
+influences: [computatrum, theagentsuite]
+realizes: []
+critiques: []
+---
+```
+
+### friend
+
+```yaml
+---
+title: Sample Friend
+date: 2026-05-19
+lane: personal
+tags: [friend]
+summary: Public description of the person or relationship.
+relation: collaborator
+location: Internet
+links:
+  website: https://example.com
+  github: https://github.com/...
+influences: []
+realizes: []
+critiques: []
+---
+```
+
+### event
+
+```yaml
+---
+title: Broaden and Build Conference 2021
+date: 2021-09-24
+lane: research
+tags: [conference, reinforcement-learning]
+summary: Presented my poster on affective psychology and multi-agent reinforcement learning.
+eventType: conference # conference | meetup | talk | workshop | hackathon | travel | launch | other
+status: presented # upcoming | attended | presented | hosted | cancelled
+role: poster presenter
+venue: University of Texas at Arlington
+location: Arlington, Texas
+url: /assets/pdf/Broadening_and_Building_Beyond_Classical_Reinforcement_Learning.pdf
+influences: [broadening-and-building-beyond-classical-reinforcement-learning]
+realizes: []
+critiques: []
+---
+```
+
 ### vision
 
 ```yaml
@@ -148,18 +237,10 @@ Rules:
 - Don't duplicate frontmatter relationships here.
 - Add `note` whenever the edge isn't self-explanatory — it shows on hover.
 
-## Now dock
+## Latest update
 
-`content/now/index.mdx` — a single file, kept fresh weekly:
-
-```yaml
----
-updated: 2026-05-01
-building: VibeStartup
-reading: A Beautiful Loop ch. 4
----
-What's alive this week. Two or three sentences max.
-```
+The homepage and floating dock point at the newest `content/updates/*.mdx`
+node by `date`.
 
 ## Lanes
 
@@ -168,7 +249,7 @@ Lanes are the timeline's horizontal swimlanes. Pick exactly one per node:
 - `research` — papers, theory, deep notes
 - `building` — projects, products, infra, hardware
 - `writing` — posts, essays, readings, the book
-- `personal` — visions, life, experience entries
+- `personal` — visions, life, experience entries, friends, personal events
 
 Don't add new lanes without a design discussion — they shape the timeline.
 
@@ -180,18 +261,6 @@ Don't add new lanes without a design discussion — they shape the timeline.
 - `shelved` — paused or abandoned, kept for the record
 
 Visualized as the project node's color/opacity in both views.
-
-## Migration from Jekyll
-
-`scripts/migrate-jekyll.ts` reads `../jacobfv.github.io/_posts/`, `_projects/`, `_bio/`, etc., and emits MDX into `content/`. It:
-
-1. Maps Jekyll frontmatter → the schemas above.
-2. Slugifies `_bio` essays into `content/visions/`.
-3. Rewrites internal links from Jekyll's `{% link %}` to MDX-relative.
-4. Copies referenced images into `public/img/migrated/`.
-5. Leaves `influences/realizes/critiques` empty — those are filled by hand afterward.
-
-Run once, commit the output, then iterate manually.
 
 ## Authoring rules
 

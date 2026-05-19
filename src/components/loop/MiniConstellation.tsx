@@ -4,7 +4,7 @@
 // losing scroll position.
 
 import { computeForceLayout } from "@/lib/layout";
-import { getGraph, type Lane } from "@/lib/graph";
+import { getGraph, nodeHref, type Lane } from "@/lib/graph";
 
 const W = 240;
 const H = 320;
@@ -116,7 +116,7 @@ export function MiniConstellation({ highlight }: { highlight?: string[] }) {
           if (!p) return null;
           const isHi = highlightSet.has(n.id);
           return (
-            <a key={n.id} href={`/${n.id}`} target="_blank" rel="noreferrer">
+            <a key={n.id} href={nodeHref(n)} target="_blank" rel="noreferrer">
               <circle
                 cx={p.x}
                 cy={p.y}

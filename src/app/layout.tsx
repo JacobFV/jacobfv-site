@@ -1,6 +1,23 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
+import { ThemeToggle } from "@/components/chrome/ThemeToggle";
 import "./globals.css";
+
+// Pre-paint script: reads the stored theme (or system pref) and sets
+// data-theme on <html> before React hydrates, preventing a flash.
+const themeBootScript = `
+(function(){
+  try {
+    var t = localStorage.getItem('theme');
+    if (t !== 'light' && t !== 'dark') {
+      t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    }
+    document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+})();
+`;
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -36,8 +53,15 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${fraunces.variable} ${inter.variable} ${jetbrains.variable}`}
+      suppressHydrationWarning
     >
-      <body>{children}</body>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
+      </head>
+      <body>
+        {children}
+        <ThemeToggle />
+      </body>
     </html>
   );
 }

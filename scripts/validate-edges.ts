@@ -20,7 +20,18 @@ import { manualEdges } from "../src/data/edges";
 const NEW = process.cwd();
 const VELITE = path.join(NEW, ".velite");
 
-const COLLECTIONS = ["posts", "projects", "papers", "readings", "visions", "experience"] as const;
+const COLLECTIONS = [
+  "posts",
+  "projects",
+  "papers",
+  "readings",
+  "updates",
+  "skills",
+  "friends",
+  "events",
+  "visions",
+  "experience",
+] as const;
 
 type Edge = {
   source: string;

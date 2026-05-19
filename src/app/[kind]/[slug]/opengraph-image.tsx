@@ -1,18 +1,12 @@
 import { ImageResponse } from "next/og";
-import { getGraph, type Lane } from "@/lib/graph";
+import { getGraph, KIND_PREFIX, type Lane } from "@/lib/graph";
 
 export const alt = "Jacob Valdez";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export function generateImageMetadata() {
-  return getGraph().nodes.map((n) => ({
-    id: n.id,
-    alt: n.title,
-    size,
-    contentType,
-  }));
-}
+// One OG per route — Next derives the image URL from the route params.
+// No generateImageMetadata needed.
 
 const laneHex: Record<Lane, string> = {
   research: "#6FA8DC",
@@ -24,10 +18,13 @@ const laneHex: Record<Lane, string> = {
 export default async function OG({
   params,
 }: {
-  params: Promise<{ slug: string; id: string }>;
+  params: Promise<{ kind: string; slug: string }>;
 }) {
-  const { slug } = await params;
-  const node = getGraph().byId.get(slug);
+  const { kind, slug } = await params;
+  const looked = getGraph().byId.get(slug);
+  // Only render OG for the canonical (kind, slug) pair. Otherwise treat as
+  // an unknown route — the og will fall back to the generic Jacob image.
+  const node = looked && KIND_PREFIX[looked.kind] === kind ? looked : undefined;
 
   return new ImageResponse(
     (
@@ -35,8 +32,7 @@ export default async function OG({
         style={{
           height: "100%",
           width: "100%",
-          background:
-            "radial-gradient(ellipse at top left, #0E1014 0%, #04050A 75%)",
+          background: "radial-gradient(ellipse at top left, #0E1014 0%, #04050A 75%)",
           display: "flex",
           flexDirection: "column",
           padding: "72px 80px",

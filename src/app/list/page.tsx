@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getGraph, type Lane, type NodeKind } from "@/lib/graph";
+import { getGraph, nodeHref, type Lane, type NodeKind } from "@/lib/graph";
 
 const laneClass: Record<Lane, string> = {
   research: "text-[var(--color-lane-research)]",
@@ -13,6 +13,10 @@ const kindLabel: Record<NodeKind, string> = {
   project: "project",
   paper: "paper",
   reading: "reading",
+  update: "update",
+  skill: "skill",
+  friend: "friend",
+  event: "event",
   vision: "vision",
   experience: "experience",
 };
@@ -43,7 +47,7 @@ export default function ListPage() {
       <ul className="divide-y divide-[var(--color-bg-2)]">
         {sorted.map((n) => (
           <li key={n.id} className="py-4">
-            <Link href={`/${n.id}`} className="group flex flex-col gap-1 no-underline">
+            <Link href={nodeHref(n)} className="group flex flex-col gap-1 no-underline">
               <div className="flex items-baseline gap-3 font-[family-name:var(--font-mono)] text-xs text-[var(--color-ink-mute)]">
                 <time>{formatDate(n.date)}</time>
                 <span className={laneClass[n.lane]}>{n.lane}</span>
