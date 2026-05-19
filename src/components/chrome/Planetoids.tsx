@@ -13,8 +13,33 @@ import { nodeHref, type Lane, type NodeKind } from "@/lib/graph-types";
 //   - Dust: a handful of hardcoded decorative dots near the face, for
 //     cosmic ambience.
 //
-// Returns a fragment so bodies share the pfp's stacking context — see
-// OrbitDecor.tsx for the same trick.
+// Motion is fundamentally 3D: every body has a slowly oscillating z
+// coordinate, and moons orbit on a tilted plane so they swing between
+// "in front of" and "behind" their planet. Perspective projection
+// (FOCAL / (FOCAL - z)) turns z into scale + foreshortened position;
+// z also drives opacity and zIndex so bodies cross in front of and
+// behind each other naturally.
+//
+// Visibility: everything renders inside a masked container so bodies
+// fade out softly before they can drift over page text. The mask is a
+// composite of an upward-biased oval (limits horizontal reach) and a
+// vertical gradient (cuts off below the pfp); intersected, this draws
+// a soft "halo" around the face. The mask is transparent — not opaque —
+// so the underlying page background shows through unchanged, which
+// keeps things continuous when the page bg becomes a live canvas.
+
+const FOCAL = 1000;
+const PLANET_Z_AMP = 70;
+const DUST_Z_AMP = 45;
+
+// Mask geometry — wrapper is centered on the pfp. Width/height chosen so
+// the wrapper encloses every orbit center plus its drift amplitude. The
+// gradients are tuned in wrapper-percent space.
+const FIELD_W = 1200;
+const FIELD_H = 800;
+const FIELD_MASK =
+  "radial-gradient(ellipse 480px 700px at 50% 50%, black 0%, black 70%, transparent 100%), " +
+  "linear-gradient(to bottom, black 0%, black 58%, transparent 73%)";
 
 export type PlanetMoon = {
   id: string;
@@ -91,9 +116,19 @@ export function Planetoids({ planets }: { planets: Planet[] }) {
         const p = planets[i];
         const el = planetRefs.current[i];
         if (!el) continue;
-        const x = p.cx + p.ax * Math.sin(p.wx * t + p.px);
-        const y = p.cy + p.ay * Math.cos(p.wy * t + p.py);
-        el.style.transform = `translate(-50%, -50%) translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0)`;
+        // World-space drift: Lissajous in x/y, slow sin in z.
+        const wx = p.cx + p.ax * Math.sin(p.wx * t + p.px);
+        const wy = p.cy + p.ay * Math.cos(p.wy * t + p.py);
+        const wzFreq = (p.wx + p.wy) * 0.45 + 0.05;
+        const wzPhase = p.px * 0.7 + p.py * 0.3;
+        const wz = PLANET_Z_AMP * Math.sin(wzFreq * t + wzPhase);
+        const scale = FOCAL / (FOCAL - wz);
+        const sx = wx * scale;
+        const sy = wy * scale;
+        const opacity = Math.max(0.6, Math.min(1, 0.85 + (scale - 1) * 2));
+        el.style.transform = `translate(-50%, -50%) translate3d(${sx.toFixed(2)}px, ${sy.toFixed(2)}px, 0) scale(${scale.toFixed(3)})`;
+        el.style.opacity = opacity.toFixed(3);
+        el.style.zIndex = String(5 + Math.round(wz / 8));
         const moons = p.moons;
         const row = moonRefs.current[i];
         if (!row) continue;
@@ -101,19 +136,39 @@ export function Planetoids({ planets }: { planets: Planet[] }) {
           const m = moons[j];
           const mel = row[j];
           if (!mel) continue;
+          // Tilted orbit in 3D: cos(a) lives in the screen-x axis,
+          // sin(a) is split between screen-y (cos tilt) and z (sin tilt),
+          // so the moon swings between in-front and behind its planet.
           const a = m.phase + m.w * t;
-          const mx = x + m.r * Math.cos(a);
-          const my = y + m.r * Math.sin(a);
-          mel.style.transform = `translate(-50%, -50%) translate3d(${mx.toFixed(2)}px, ${my.toFixed(2)}px, 0)`;
+          const tilt = Math.sign(m.w || 1) * 1.0;
+          const lx = m.r * Math.cos(a);
+          const lyFlat = m.r * Math.sin(a);
+          const ly = lyFlat * Math.cos(tilt);
+          const lz = lyFlat * Math.sin(tilt);
+          const moonZ = wz + lz;
+          const moonScale = FOCAL / (FOCAL - moonZ);
+          const mx = (wx + lx) * moonScale;
+          const my = (wy + ly) * moonScale;
+          const moonOpacity = Math.max(0.55, Math.min(1, 0.8 + (moonScale - 1) * 2));
+          mel.style.transform = `translate(-50%, -50%) translate3d(${mx.toFixed(2)}px, ${my.toFixed(2)}px, 0) scale(${moonScale.toFixed(3)})`;
+          mel.style.opacity = moonOpacity.toFixed(3);
+          mel.style.zIndex = String(5 + Math.round(moonZ / 8));
         }
       }
       for (let i = 0; i < DUST.length; i++) {
         const d = DUST[i];
         const el = dustRefs.current[i];
         if (!el) continue;
-        const x = d.cx + d.ax * Math.sin(d.wx * t + d.px);
-        const y = d.cy + d.ay * Math.cos(d.wy * t + d.py);
-        el.style.transform = `translate(-50%, -50%) translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0)`;
+        const wx = d.cx + d.ax * Math.sin(d.wx * t + d.px);
+        const wy = d.cy + d.ay * Math.cos(d.wy * t + d.py);
+        const wzFreq = (d.wx + d.wy) * 0.4 + 0.04;
+        const wzPhase = d.px * 0.5 + d.py * 0.5;
+        const wz = DUST_Z_AMP * Math.sin(wzFreq * t + wzPhase);
+        const scale = FOCAL / (FOCAL - wz);
+        const sx = wx * scale;
+        const sy = wy * scale;
+        el.style.transform = `translate(-50%, -50%) translate3d(${sx.toFixed(2)}px, ${sy.toFixed(2)}px, 0) scale(${scale.toFixed(3)})`;
+        el.style.opacity = String(d.opacity * Math.max(0.6, Math.min(1.2, scale)));
       }
       raf = requestAnimationFrame(tick);
     };
@@ -122,7 +177,17 @@ export function Planetoids({ planets }: { planets: Planet[] }) {
   }, [planets]);
 
   return (
-    <>
+    <div
+      className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      style={{
+        width: FIELD_W,
+        height: FIELD_H,
+        WebkitMaskImage: FIELD_MASK,
+        WebkitMaskComposite: "source-in",
+        maskImage: FIELD_MASK,
+        maskComposite: "intersect",
+      }}
+    >
       {/* Project planets + their moons. */}
       {planets.map((p, i) => (
         <Fragment key={`planet-${p.id}`}>
@@ -212,7 +277,7 @@ export function Planetoids({ planets }: { planets: Planet[] }) {
           }}
         />
       ))}
-    </>
+    </div>
   );
 }
 

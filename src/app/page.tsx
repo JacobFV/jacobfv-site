@@ -221,11 +221,20 @@ export default function HomePage() {
       <main className="mx-auto max-w-5xl px-6 pt-24 pb-32">
         {/* ---- Hero ---- */}
         <section className="mb-32 flex flex-col items-center text-center">
-          <div className="relative grid h-[200px] w-[200px] place-items-center">
+          <div className="relative isolate grid h-[200px] w-[200px] place-items-center">
             <Planetoids planets={planets} />
             <OrbitDecor {...orbiterProps} />
             <PfpReveal />
           </div>
+          {/*
+            Hero content wrapper. `relative` makes this a positioned
+            descendant; since it comes after the pfp box in document
+            order, it paints on top — so any planetoid/orbiter that
+            drifts toward this area falls behind the text without
+            needing a solid bg. The mask on Planetoids softens the
+            visual fade; this z-stack is the structural backstop.
+          */}
+          <div className="relative flex w-full flex-col items-center">
           <h1
             className="mt-6 font-[family-name:var(--font-display)] text-5xl tracking-tight text-[var(--color-ink)] sm:text-6xl"
             style={{ fontVariationSettings: '"opsz" 144' }}
@@ -313,6 +322,7 @@ export default function HomePage() {
               More about me.
             </Link>
           </p>
+          </div>
         </section>
 
         {/* ---- Latest updates ---- */}
