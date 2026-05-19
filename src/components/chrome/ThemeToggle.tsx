@@ -12,7 +12,7 @@ export function ThemeToggle() {
 
   useEffect(() => {
     const current = document.documentElement.getAttribute("data-theme") as Theme | null;
-    setTheme(current ?? "dark");
+    setTheme(current ?? "light");
   }, []);
 
   if (!theme) return null;
@@ -36,8 +36,8 @@ export function ThemeToggle() {
       title={`Switch to ${next} mode`}
       style={{
         position: "fixed",
-        bottom: 24,
-        right: 24,
+        top: 20,
+        right: 20,
         zIndex: 4,
         width: 36,
         height: 36,

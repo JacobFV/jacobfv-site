@@ -52,9 +52,26 @@ function pickFeatured(nodes: Node[]): Node[] {
 }
 
 export default function HomePage() {
-  const { nodes } = getGraph();
+  const graph = getGraph();
+  const { nodes } = graph;
 
   const featured = pickFeatured(nodes);
+  // Full project list, sorted by status (active first, then shipped, then
+  // shelved/idea), then by date desc within each bucket.
+  const statusRank: Record<string, number> = {
+    active: 0,
+    shipped: 1,
+    idea: 2,
+    shelved: 3,
+  };
+  const allProjects = nodes
+    .filter((n) => n.kind === "project")
+    .sort((a, b) => {
+      const ra = statusRank[a.status ?? "active"] ?? 9;
+      const rb = statusRank[b.status ?? "active"] ?? 9;
+      if (ra !== rb) return ra - rb;
+      return a.date < b.date ? 1 : -1;
+    });
   const recentPosts = nodes
     .filter((n) => n.kind === "post")
     .sort((a, b) => (a.date < b.date ? 1 : -1))
@@ -110,6 +127,49 @@ export default function HomePage() {
     events: recentEvents.map(toOrbiter("event")),
   };
 
+  // Project planetoids — the projects after the top 2 (which are the
+  // close-orbit ones in OrbitDecor) become drifting planetoids around
+  // the pfp. Each carries up to 2 moons pulled from its edge
+  // neighborhood. Hand-tuned drift positions read clockwise from the
+  // upper-left.
+  const planetSlots: Array<Omit<Parameters<typeof Planetoids>[0]["planets"][number], "id" | "title" | "lane" | "kind" | "asset" | "moons">> = [
+    { cx: -320, cy: -150, ax: 22, ay: 18, wx: 0.16, wy: 0.11, px: 0.0, py: 1.4, size: 38 },
+    { cx:  340, cy: -130, ax: 20, ay: 22, wx: 0.13, wy: 0.18, px: 0.8, py: 0.3, size: 36 },
+    { cx:  300, cy:   80, ax: 24, ay: 16, wx: 0.10, wy: 0.14, px: 2.1, py: 2.7, size: 34 },
+    { cx: -300, cy:   60, ax: 18, ay: 20, wx: 0.18, wy: 0.12, px: 3.4, py: 0.9, size: 32 },
+  ];
+  const planets = featured.slice(2, 2 + planetSlots.length).map((p, i) => {
+    const slot = planetSlots[i];
+    // Up to 2 neighbors, preferring the project's outbound edges.
+    const neighborIds = graph
+      .neighbors(p.id)
+      .map((e) => (e.source === p.id ? e.target : e.source))
+      .filter((id) => id !== p.id);
+    const moonNodes = Array.from(new Set(neighborIds))
+      .map((id) => graph.byId.get(id))
+      .filter((n): n is Node => Boolean(n))
+      .slice(0, 2);
+    const moons = moonNodes.map((m, j) => ({
+      id: m.id,
+      title: m.title,
+      lane: m.lane,
+      kind: m.kind,
+      asset: m.orbitAsset,
+      r: 28 + j * 10,
+      w: 0.55 + j * 0.15 * (j % 2 === 0 ? 1 : -1),
+      phase: (j * Math.PI) / 2 + i * 0.7,
+    }));
+    return {
+      id: p.id,
+      title: p.title,
+      lane: p.lane,
+      kind: p.kind,
+      asset: p.orbitAsset,
+      moons,
+      ...slot,
+    };
+  });
+
   const searchable = nodes.map((n) => ({
     id: n.id,
     title: n.title,
@@ -126,7 +186,7 @@ export default function HomePage() {
         {/* ---- Hero ---- */}
         <section className="mb-32 flex flex-col items-center text-center">
           <div className="relative grid h-[200px] w-[200px] place-items-center">
-            <Planetoids />
+            <Planetoids planets={planets} />
             <OrbitDecor {...orbiterProps} />
             <PfpReveal />
           </div>
@@ -257,10 +317,21 @@ export default function HomePage() {
         <Section
           eyebrow="Selected work"
           title="Active Threads:"
-          link={{ href: "/list", label: "every project →" }}
+          link={{ href: "/list", label: "every node →" }}
         >
           <ul className="flex flex-col">
             {featured.map((n) => (
+              <li key={n.id}>
+                <ProjectRow node={n} />
+              </li>
+            ))}
+          </ul>
+        </Section>
+
+        {/* ---- All projects ---- */}
+        <Section eyebrow="Index" title="Projects">
+          <ul className="flex flex-col">
+            {allProjects.map((n) => (
               <li key={n.id}>
                 <ProjectRow node={n} />
               </li>

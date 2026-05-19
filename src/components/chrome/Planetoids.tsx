@@ -1,26 +1,39 @@
 "use client";
 
+import Link from "next/link";
 import { Fragment, useEffect, useRef } from "react";
+import { nodeHref, type Lane, type NodeKind } from "@/lib/graph-types";
 
-// Decorative dust + planetoids + their moons. Not orbiting the pfp —
-// each body drifts on its own Lissajous (sin/cos) curve so motion stays
-// bounded but never repeats in lock-step with anything else. Moons DO
-// orbit their parent planetoid in tight circles.
+// Drifting body system around the pfp. Two layers:
 //
-// Coordinates are px offsets from the pfp center (positive Y is down).
-// The component returns a fragment so it shares the pfp's stacking
-// context — same trick OrbitDecor uses to layer behind/in front.
+//   - Planets: real projects from the graph. Each has its own slow
+//     Lissajous drift (sin/cos with different angular speeds) so motion
+//     is bounded but never aligned, and orbits 1–2 moons (related
+//     nodes pulled from the project's edge neighborhood server-side).
+//   - Dust: a handful of hardcoded decorative dots near the face, for
+//     cosmic ambience.
+//
+// Returns a fragment so bodies share the pfp's stacking context — see
+// OrbitDecor.tsx for the same trick.
 
-const COLORS = {
-  research: "var(--color-lane-research)",
-  building: "var(--color-lane-building)",
-  writing: "var(--color-lane-writing)",
-  personal: "var(--color-lane-personal)",
-  dust: "var(--color-ink-mute)",
+export type PlanetMoon = {
+  id: string;
+  title: string;
+  lane: Lane;
+  kind: NodeKind;
+  asset?: string;
+  r: number; // orbital radius around the planet (px)
+  w: number; // angular speed (rad/sec, signed)
+  phase: number; // start angle
 };
 
-type Moon = { r: number; w: number; p: number; size: number; color: string };
-type Body = {
+export type Planet = {
+  id: string;
+  title: string;
+  lane: Lane;
+  kind: NodeKind;
+  asset?: string;
+  // Drift center + Lissajous params.
   cx: number;
   cy: number;
   ax: number;
@@ -30,39 +43,42 @@ type Body = {
   px: number;
   py: number;
   size: number;
-  color: string;
-  opacity: number;
-  moons?: Moon[];
+  moons: PlanetMoon[];
 };
 
-const BODIES: Body[] = [
-  // Close-in dust — small + fast micro-drift right around the face.
-  { cx: -132, cy: -86, ax: 14, ay: 10, wx: 0.6, wy: 0.4, px: 0.0, py: 1.0, size: 6, color: COLORS.dust, opacity: 0.55 },
-  { cx:  138, cy: -98, ax: 12, ay: 14, wx: 0.5, wy: 0.7, px: 1.0, py: 0.0, size: 7, color: COLORS.dust, opacity: 0.55 },
-  { cx:  -92, cy: 122, ax: 10, ay: 12, wx: 0.4, wy: 0.6, px: 2.0, py: 3.0, size: 5, color: COLORS.dust, opacity: 0.45 },
-  { cx:  108, cy: 132, ax: 16, ay:  8, wx: 0.7, wy: 0.5, px: 4.0, py: 5.0, size: 6, color: COLORS.dust, opacity: 0.5  },
+type Dust = {
+  cx: number;
+  cy: number;
+  ax: number;
+  ay: number;
+  wx: number;
+  wy: number;
+  px: number;
+  py: number;
+  size: number;
+  opacity: number;
+};
 
-  // Mid-distance neighbor planetoids with their own moons.
-  { cx: -262, cy: -38, ax: 30, ay: 22, wx: 0.18, wy: 0.13, px: 0.0, py: 2.0, size: 18, color: COLORS.research, opacity: 0.7,
-    moons: [
-      { r: 28, w:  0.60, p: 0.0, size: 5, color: COLORS.dust },
-      { r: 40, w: -0.42, p: 1.6, size: 4, color: COLORS.dust },
-    ] },
-  { cx:  282, cy:  42, ax: 26, ay: 18, wx: 0.16, wy: 0.10, px: 1.0, py: 3.0, size: 16, color: COLORS.building, opacity: 0.7,
-    moons: [
-      { r: 26, w: 0.55, p: 1.0, size: 5, color: COLORS.dust },
-    ] },
-  { cx:   -8, cy: -258, ax: 24, ay: 18, wx: 0.12, wy: 0.15, px: 2.0, py: 0.0, size: 14, color: COLORS.writing, opacity: 0.6 },
-  { cx:   12, cy:  262, ax: 20, ay: 14, wx: 0.20, wy: 0.18, px: 3.0, py: 1.0, size: 12, color: COLORS.personal, opacity: 0.6 },
-
-  // Far drifters.
-  { cx: -362, cy:  178, ax: 40, ay: 28, wx: 0.08, wy: 0.06, px: 0.5, py: 2.2, size: 5, color: COLORS.dust, opacity: 0.4 },
-  { cx:  336, cy: -182, ax: 36, ay: 30, wx: 0.09, wy: 0.07, px: 1.3, py: 0.7, size: 5, color: COLORS.dust, opacity: 0.4 },
+const DUST: Dust[] = [
+  { cx: -132, cy: -86, ax: 14, ay: 10, wx: 0.6, wy: 0.4, px: 0.0, py: 1.0, size: 6, opacity: 0.55 },
+  { cx:  138, cy: -98, ax: 12, ay: 14, wx: 0.5, wy: 0.7, px: 1.0, py: 0.0, size: 7, opacity: 0.5 },
+  { cx:  -92, cy: 122, ax: 10, ay: 12, wx: 0.4, wy: 0.6, px: 2.0, py: 3.0, size: 5, opacity: 0.45 },
+  { cx:  108, cy: 132, ax: 16, ay:  8, wx: 0.7, wy: 0.5, px: 4.0, py: 5.0, size: 6, opacity: 0.45 },
+  { cx: -362, cy:  178, ax: 40, ay: 28, wx: 0.08, wy: 0.06, px: 0.5, py: 2.2, size: 4, opacity: 0.4 },
+  { cx:  336, cy: -182, ax: 36, ay: 30, wx: 0.09, wy: 0.07, px: 1.3, py: 0.7, size: 4, opacity: 0.4 },
 ];
 
-export function Planetoids() {
-  const bodyRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const moonRefs = useRef<(HTMLDivElement | null)[][]>([]);
+const laneText: Record<Lane, string> = {
+  research: "text-[var(--color-lane-research)]",
+  building: "text-[var(--color-lane-building)]",
+  writing: "text-[var(--color-lane-writing)]",
+  personal: "text-[var(--color-lane-personal)]",
+};
+
+export function Planetoids({ planets }: { planets: Planet[] }) {
+  const planetRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+  const moonRefs = useRef<(HTMLAnchorElement | null)[][]>([]);
+  const dustRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -71,75 +87,151 @@ export function Planetoids() {
     const t0 = performance.now();
     const tick = (now: number) => {
       const t = (now - t0) / 1000;
-      for (let i = 0; i < BODIES.length; i++) {
-        const b = BODIES[i];
-        const el = bodyRefs.current[i];
+      for (let i = 0; i < planets.length; i++) {
+        const p = planets[i];
+        const el = planetRefs.current[i];
         if (!el) continue;
-        const x = b.cx + b.ax * Math.sin(b.wx * t + b.px);
-        const y = b.cy + b.ay * Math.cos(b.wy * t + b.py);
+        const x = p.cx + p.ax * Math.sin(p.wx * t + p.px);
+        const y = p.cy + p.ay * Math.cos(p.wy * t + p.py);
         el.style.transform = `translate(-50%, -50%) translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0)`;
-        if (b.moons) {
-          const moonRow = moonRefs.current[i];
-          if (!moonRow) continue;
-          for (let j = 0; j < b.moons.length; j++) {
-            const m = b.moons[j];
-            const mel = moonRow[j];
-            if (!mel) continue;
-            const a = m.p + m.w * t;
-            const mx = x + m.r * Math.cos(a);
-            const my = y + m.r * Math.sin(a);
-            mel.style.transform = `translate(-50%, -50%) translate3d(${mx.toFixed(2)}px, ${my.toFixed(2)}px, 0)`;
-          }
+        const moons = p.moons;
+        const row = moonRefs.current[i];
+        if (!row) continue;
+        for (let j = 0; j < moons.length; j++) {
+          const m = moons[j];
+          const mel = row[j];
+          if (!mel) continue;
+          const a = m.phase + m.w * t;
+          const mx = x + m.r * Math.cos(a);
+          const my = y + m.r * Math.sin(a);
+          mel.style.transform = `translate(-50%, -50%) translate3d(${mx.toFixed(2)}px, ${my.toFixed(2)}px, 0)`;
         }
+      }
+      for (let i = 0; i < DUST.length; i++) {
+        const d = DUST[i];
+        const el = dustRefs.current[i];
+        if (!el) continue;
+        const x = d.cx + d.ax * Math.sin(d.wx * t + d.px);
+        const y = d.cy + d.ay * Math.cos(d.wy * t + d.py);
+        el.style.transform = `translate(-50%, -50%) translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0)`;
       }
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, []);
+  }, [planets]);
 
   return (
     <>
-      {BODIES.map((b, i) => (
-        <Fragment key={`body-${i}`}>
-          <div
+      {/* Project planets + their moons. */}
+      {planets.map((p, i) => (
+        <Fragment key={`planet-${p.id}`}>
+          <Link
+            href={nodeHref({ kind: p.kind, id: p.id })}
             ref={(el) => {
-              bodyRefs.current[i] = el;
+              planetRefs.current[i] = el;
             }}
-            aria-hidden
-            className="pointer-events-none absolute top-1/2 left-1/2 rounded-full"
+            aria-label={p.title}
+            title={p.title}
+            className={`pointer-events-auto absolute top-1/2 left-1/2 grid place-items-center overflow-hidden rounded-full bg-[var(--color-bg-1)] no-underline shadow-[var(--ring-soft)] transition-colors hover:bg-[var(--color-bg-2)] ${laneText[p.lane]}`}
             style={{
-              width: b.size,
-              height: b.size,
-              background: b.color,
-              opacity: b.opacity,
-              transform: `translate(-50%, -50%) translate3d(${b.cx}px, ${b.cy}px, 0)`,
-              zIndex: 0,
+              width: p.size,
+              height: p.size,
+              transform: `translate(-50%, -50%) translate3d(${p.cx}px, ${p.cy}px, 0)`,
+              zIndex: 5,
             }}
-          />
-          {b.moons?.map((m, j) => {
+          >
+            {p.asset ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={p.asset} alt="" loading="lazy" className="h-full w-full object-cover" />
+            ) : (
+              <span
+                className="grid h-full w-full place-items-center"
+                style={{
+                  background: `radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--color-lane-${p.lane}) 55%, transparent) 0%, var(--color-bg-1) 78%)`,
+                }}
+              >
+                <ProjectCube />
+              </span>
+            )}
+          </Link>
+          {p.moons.map((m, j) => {
             if (!moonRefs.current[i]) moonRefs.current[i] = [];
+            const moonSize = 14;
+            // Render position for SSR; RAF overwrites once mounted.
+            const mx = p.cx + m.r * Math.cos(m.phase);
+            const my = p.cy + m.r * Math.sin(m.phase);
             return (
-              <div
-                key={`moon-${i}-${j}`}
+              <Link
+                key={`moon-${p.id}-${m.id}`}
+                href={nodeHref({ kind: m.kind, id: m.id })}
                 ref={(el) => {
                   moonRefs.current[i][j] = el;
                 }}
-                aria-hidden
-                className="pointer-events-none absolute top-1/2 left-1/2 rounded-full"
+                aria-label={m.title}
+                title={m.title}
+                className="pointer-events-auto absolute top-1/2 left-1/2 grid place-items-center overflow-hidden rounded-full bg-[var(--color-bg-1)] no-underline shadow-[var(--ring-soft)] hover:bg-[var(--color-bg-2)]"
                 style={{
-                  width: m.size,
-                  height: m.size,
-                  background: m.color,
-                  opacity: 0.45,
-                  transform: `translate(-50%, -50%) translate3d(${b.cx + m.r}px, ${b.cy}px, 0)`,
-                  zIndex: 0,
+                  width: moonSize,
+                  height: moonSize,
+                  transform: `translate(-50%, -50%) translate3d(${mx}px, ${my}px, 0)`,
+                  zIndex: 6,
                 }}
-              />
+              >
+                {m.asset ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={m.asset} alt="" loading="lazy" className="h-full w-full object-cover" />
+                ) : (
+                  <span
+                    className="block h-full w-full"
+                    style={{ background: `var(--color-lane-${m.lane})`, opacity: 0.7 }}
+                  />
+                )}
+              </Link>
             );
           })}
         </Fragment>
       ))}
+
+      {/* Decorative dust — non-interactive bg specks. */}
+      {DUST.map((d, i) => (
+        <div
+          key={`dust-${i}`}
+          ref={(el) => {
+            dustRefs.current[i] = el;
+          }}
+          aria-hidden
+          className="pointer-events-none absolute top-1/2 left-1/2 rounded-full"
+          style={{
+            width: d.size,
+            height: d.size,
+            background: "var(--color-ink-mute)",
+            opacity: d.opacity,
+            transform: `translate(-50%, -50%) translate3d(${d.cx}px, ${d.cy}px, 0)`,
+            zIndex: 0,
+          }}
+        />
+      ))}
     </>
+  );
+}
+
+function ProjectCube() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M3 7l9-5 9 5-9 5-9-5z" />
+      <path d="M3 7v10l9 5 9-5V7" />
+      <path d="M12 12v10" />
+    </svg>
   );
 }

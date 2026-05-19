@@ -71,7 +71,7 @@ export function CmdK({ nodes }: Props) {
     router.push(href);
   };
 
-  if (!open) return <CmdHint />;
+  if (!open) return <SearchButton onClick={() => setOpen(true)} />;
 
   return (
     <div
@@ -271,33 +271,48 @@ function ActionItem({
   );
 }
 
-function CmdHint() {
+// Search button — sits at top-right next to ThemeToggle. Both are 36px
+// circular surfaces; theme toggle is at right:20, this one is at right:64
+// so they don't overlap.
+function SearchButton({ onClick }: { onClick: () => void }) {
   return (
-    <div
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="Search (⌘K)"
+      title="Search (⌘K)"
       style={{
         position: "fixed",
-        bottom: 24,
-        right: 24,
-        fontFamily: "var(--font-mono)",
-        fontSize: 11,
-        color: "var(--color-ink-mute)",
-        userSelect: "none",
-        zIndex: 5,
+        top: 20,
+        right: 64,
+        zIndex: 4,
+        width: 36,
+        height: 36,
+        borderRadius: 999,
+        border: "none",
+        background: "var(--color-bg-1)",
+        color: "var(--color-ink-dim)",
+        boxShadow: "var(--ring-soft)",
+        cursor: "pointer",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
-      <kbd
-        style={{
-          padding: "2px 6px",
-          border: "1px solid var(--color-bg-2)",
-          borderRadius: 3,
-          marginRight: 4,
-          background: "var(--color-bg-1)",
-          fontFamily: "inherit",
-        }}
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden
       >
-        ⌘K
-      </kbd>
-      to search
-    </div>
+        <circle cx="11" cy="11" r="7" />
+        <line x1="20" y1="20" x2="16.65" y2="16.65" />
+      </svg>
+    </button>
   );
 }

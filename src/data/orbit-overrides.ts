@@ -56,4 +56,9 @@ export const ORBIT_OVERRIDES: Record<string, OrbitOverride> = {
 
   // ---- Visions / essays ----
   "focus-statement": { asset: "/img/migrated/focus-statement.png" },
+
+  // ---- Events ----
+  "broaden-and-build-conference-2021": {
+    asset: "/img/migrated/broaden_and_build_presentation.jpeg",
+  },
 };

@@ -73,14 +73,10 @@ const laneText: Record<Lane, string> = {
   personal: "text-[var(--color-lane-personal)]",
 };
 
-// First alphanumeric character of the title, uppercased. Falls back to "·"
-// for titles that start with punctuation only.
-function monogram(title: string): string {
-  const m = title.match(/[A-Za-z0-9]/);
-  return m ? m[0].toUpperCase() : "·";
-}
-
-// Rendering precedence: iframe embed → asset image → monogram letter.
+// Rendering precedence: iframe embed → asset image → kind-icon + lane
+// gradient fallback. Never a bare letter — the gradient + icon reads as
+// a tiny "planet" even when there's no asset.
+//
 // The iframe is scaled down hard so an entire deployed app reads as a
 // tiny moving thumbnail and stays interaction-inert (pointer-events on
 // the iframe are disabled; the wrapping Link handles the click).
@@ -121,7 +117,73 @@ function OrbiterContent({ item }: { item: OrbiterItem }) {
       />
     );
   }
-  return <span>{monogram(item.title)}</span>;
+  // Fallback: lane-tinted radial gradient + a kind-specific icon. The
+  // color-mix() fades the lane color toward transparent so the gradient
+  // sits softly over bg-1 in both light and dark themes.
+  return (
+    <span
+      className="grid h-full w-full place-items-center"
+      style={{
+        background: `radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--color-lane-${item.lane}) 55%, transparent) 0%, var(--color-bg-1) 78%)`,
+      }}
+    >
+      <KindGlyph kind={item.kind} />
+    </span>
+  );
+}
+
+function KindGlyph({ kind }: { kind: OrbiterKind }) {
+  const common = {
+    width: 16,
+    height: 16,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 2,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    "aria-hidden": true,
+  };
+  switch (kind) {
+    case "friend":
+      return (
+        <svg {...common}>
+          <circle cx="9" cy="8" r="3.2" />
+          <path d="M2.5 20c.5-3.6 3.3-5.6 6.5-5.6S15 16.4 15.5 20" />
+          <circle cx="17" cy="9" r="2.4" />
+          <path d="M14.8 14.4c2.6.2 4.6 2 5 4.6" />
+        </svg>
+      );
+    case "skill":
+      return (
+        <svg {...common}>
+          <polygon points="13 2 4 14 11 14 10 22 20 9 13 9 13 2" />
+        </svg>
+      );
+    case "project":
+      return (
+        <svg {...common}>
+          <path d="M3 7l9-5 9 5-9 5-9-5z" />
+          <path d="M3 7v10l9 5 9-5V7" />
+          <path d="M12 12v10" />
+        </svg>
+      );
+    case "post":
+      return (
+        <svg {...common}>
+          <path d="M4 20h4l10.5-10.5a2.12 2.12 0 0 0-3-3L5 17v3z" />
+          <path d="M13.5 6.5l3 3" />
+        </svg>
+      );
+    case "event":
+      return (
+        <svg {...common}>
+          <rect x="3" y="5" width="18" height="16" rx="2" />
+          <path d="M3 10h18" />
+          <path d="M8 3v4M16 3v4" />
+        </svg>
+      );
+  }
 }
 
 export function OrbitDecor({
