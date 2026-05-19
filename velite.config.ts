@@ -13,9 +13,7 @@ const baseFields = {
   lane,
   tags: s.array(s.string()).default([]),
   summary: s.string().max(400),
-  hero: s
-    .object({ src: s.string(), alt: s.string() })
-    .optional(),
+  hero: s.object({ src: s.string(), alt: s.string() }).optional(),
   influences: s.array(s.string()).default([]),
   realizes: s.array(s.string()).default([]),
   critiques: s.array(s.string()).default([]),
@@ -33,7 +31,9 @@ const baseFields = {
 const posts = defineCollection({
   name: "Post",
   pattern: "posts/**/*.mdx",
-  schema: s.object({ ...baseFields, slug: s.path() }).transform((d) => ({ ...d, kind: "post" as const })),
+  schema: s
+    .object({ ...baseFields, slug: s.path() })
+    .transform((d) => ({ ...d, kind: "post" as const })),
 });
 
 const projects = defineCollection({
@@ -68,6 +68,22 @@ const papers = defineCollection({
       pdf: s.string().optional(),
     })
     .transform((d) => ({ ...d, kind: "paper" as const })),
+});
+
+const readings = defineCollection({
+  name: "Reading",
+  pattern: "readings/**/*.mdx",
+  schema: s
+    .object({
+      ...baseFields,
+      slug: s.path(),
+      authors: s.array(s.string()).default([]),
+      workType: s.enum(["book", "paper", "article", "course", "other"]).default("book"),
+      status: s.enum(["queued", "reading", "finished", "paused", "reference"]).default("reading"),
+      source: s.string().optional(),
+      url: s.string().optional(),
+    })
+    .transform((d) => ({ ...d, kind: "reading" as const })),
 });
 
 const visions = defineCollection({
@@ -136,7 +152,7 @@ export default defineConfig({
     name: "[name]-[hash:6].[ext]",
     clean: true,
   },
-  collections: { posts, projects, papers, visions, experience, loop, now },
+  collections: { posts, projects, papers, readings, visions, experience, loop, now },
 });
 
 // Type for hand-curated edges, used in src/data/edges.ts.

@@ -4,13 +4,14 @@ What every node looks like and how to write one.
 
 ## Node kinds
 
-| Kind | Source folder | Example |
-|---|---|---|
-| `post` | `content/posts/` | A dated essay or note |
-| `project` | `content/projects/` | A built thing — code, hardware, paper-grade research |
-| `paper` | `content/papers/` | Academic-style writeups; cites the bib |
-| `vision` | `content/visions/` | Bio-level statements: focus, 5-year outlook, "what makes AI interesting" |
-| `experience` | `content/experience/` | A role, residency, education entry |
+| Kind         | Source folder         | Example                                                                  |
+| ------------ | --------------------- | ------------------------------------------------------------------------ |
+| `post`       | `content/posts/`      | A dated essay or note                                                    |
+| `project`    | `content/projects/`   | A built thing — code, hardware, paper-grade research                     |
+| `paper`      | `content/papers/`     | Academic-style writeups; cites the bib                                   |
+| `reading`    | `content/readings/`   | Books, papers, courses, and articles being read or annotated             |
+| `vision`     | `content/visions/`    | Bio-level statements: focus, 5-year outlook, "what makes AI interesting" |
+| `experience` | `content/experience/` | A role, residency, education entry                                       |
 
 Slugs are filenames minus extension. Treat them as permanent — they're the URL and the graph id.
 
@@ -24,7 +25,7 @@ Every MDX file starts with frontmatter. Required fields per kind:
 ---
 title: Reaching for the intangible
 date: 2021-09-12
-lane: writing            # research | building | writing | personal
+lane: writing # research | building | writing | personal
 tags: [philosophy, AI]
 summary: One or two sentences, shown in graph hover and cards.
 hero: { src: /img/posts/intangible.jpg, alt: "..." }
@@ -39,10 +40,10 @@ critiques: []
 ```yaml
 ---
 title: Computatrum
-date: 2021-10-19          # start date
-endDate: 2022-06-01       # optional, for completed projects
+date: 2021-10-19 # start date
+endDate: 2022-06-01 # optional, for completed projects
 lane: building
-status: shipped           # idea | active | shipped | shelved
+status: shipped # idea | active | shipped | shelved
 tags: [agents, infra]
 summary: ...
 hero: { src: /img/projects/computatrum.png, alt: "..." }
@@ -65,9 +66,29 @@ tags: [...]
 summary: ...
 authors: [Jacob Valdez, ...]
 venue: arXiv
-bibKey: valdez2024foo     # matches an entry in content/papers/refs.bib
+bibKey: valdez2024foo # matches an entry in content/papers/refs.bib
 pdf: /papers/foo.pdf
 influences: [...]
+---
+```
+
+### reading
+
+```yaml
+---
+title: A Beautiful Loop
+date: 2026-05-02 # date added or last substantially updated
+lane: writing
+tags: [consciousness, active-inference]
+summary: Reading notes on the active-inference account of consciousness.
+authors: [Ruben Laukkonen, Karl Friston, Shamil Chandaria]
+workType: book # book | paper | article | course | other
+status: reading # queued | reading | finished | paused | reference
+source: ch. 4 # optional chapter, edition, publication, or venue
+url: https://... # optional source link
+influences: [vision-navigable-mind]
+realizes: []
+critiques: []
 ---
 ```
 
@@ -76,12 +97,12 @@ influences: [...]
 ```yaml
 ---
 title: Where I see myself in 5 years
-date: 2025-01-01          # date written; revise the date when you revise the doc
+date: 2025-01-01 # date written; revise the date when you revise the doc
 lane: personal
 tags: [vision]
 summary: ...
 hero: { src: /img/visions/focus.png, alt: "..." }
-sceneId: focus-statement  # which r3f scene to mount; null = plain MDX
+sceneId: focus-statement # which r3f scene to mount; null = plain MDX
 realizes: []
 ---
 ```
@@ -93,7 +114,7 @@ realizes: []
 title: API/Integration Architect
 org: AGI, Inc.
 date: 2024-01-01
-endDate: 2024-12-01       # omit for current
+endDate: 2024-12-01 # omit for current
 lane: building
 tags: [agents, mobile]
 summary: One-sentence role description.
@@ -137,7 +158,6 @@ updated: 2026-05-01
 building: VibeStartup
 reading: A Beautiful Loop ch. 4
 ---
-
 What's alive this week. Two or three sentences max.
 ```
 
@@ -147,7 +167,7 @@ Lanes are the timeline's horizontal swimlanes. Pick exactly one per node:
 
 - `research` — papers, theory, deep notes
 - `building` — projects, products, infra, hardware
-- `writing` — posts, essays, the book
+- `writing` — posts, essays, readings, the book
 - `personal` — visions, life, experience entries
 
 Don't add new lanes without a design discussion — they shape the timeline.

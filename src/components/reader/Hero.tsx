@@ -38,9 +38,7 @@ export function Hero({ node }: { node: Node }) {
         {node.title}
       </h1>
 
-      <p className="mt-4 max-w-2xl text-lg text-[var(--color-ink-dim)]">
-        {node.summary}
-      </p>
+      <p className="mt-4 max-w-2xl text-lg text-[var(--color-ink-dim)]">{node.summary}</p>
 
       <KindMeta node={node} />
     </header>
@@ -53,6 +51,8 @@ function KindMeta({ node }: { node: Node }) {
       return <ProjectMeta node={node} />;
     case "paper":
       return <PaperMeta node={node} />;
+    case "reading":
+      return <ReadingMeta node={node} />;
     case "experience":
       return <ExperienceMeta node={node} />;
     case "vision":
@@ -86,9 +86,7 @@ function ProjectMeta({ node }: { node: Node }) {
 function PaperMeta({ node }: { node: Node }) {
   return (
     <div className="mt-5 grid gap-2 font-[family-name:var(--font-mono)] text-xs text-[var(--color-ink-mute)]">
-      {node.authors && node.authors.length > 0 && (
-        <div>{node.authors.join(", ")}</div>
-      )}
+      {node.authors && node.authors.length > 0 && <div>{node.authors.join(", ")}</div>}
       {node.venue && <div>{node.venue}</div>}
       {node.bibKey && (
         <div>
@@ -103,6 +101,26 @@ function PaperMeta({ node }: { node: Node }) {
           className="text-[var(--color-ink-dim)] hover:text-[var(--color-accent)]"
         >
           PDF ↗
+        </a>
+      )}
+    </div>
+  );
+}
+
+function ReadingMeta({ node }: { node: Node }) {
+  return (
+    <div className="mt-5 grid gap-2 font-[family-name:var(--font-mono)] text-xs text-[var(--color-ink-mute)]">
+      <div>{[node.workType, node.readingStatus].filter(Boolean).join(" · ")}</div>
+      {node.authors && node.authors.length > 0 && <div>{node.authors.join(", ")}</div>}
+      {node.source && <div>{node.source}</div>}
+      {node.url && (
+        <a
+          href={node.url}
+          target="_blank"
+          rel="noreferrer"
+          className="text-[var(--color-ink-dim)] hover:text-[var(--color-accent)]"
+        >
+          source ↗
         </a>
       )}
     </div>
@@ -150,8 +168,8 @@ function StatusBadge({ status }: { status: NonNullable<Node["status"]> }) {
     status === "active"
       ? "var(--color-accent)"
       : status === "shipped"
-      ? "var(--color-ink-dim)"
-      : "var(--color-ink-mute)";
+        ? "var(--color-ink-dim)"
+        : "var(--color-ink-mute)";
   return (
     <span style={{ color }} className="uppercase">
       {status}

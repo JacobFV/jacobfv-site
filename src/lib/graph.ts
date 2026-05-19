@@ -6,16 +6,19 @@ import rawExperience from "../../.velite/experience.json";
 import rawPapers from "../../.velite/papers.json";
 import rawPosts from "../../.velite/posts.json";
 import rawProjects from "../../.velite/projects.json";
+import rawReadings from "../../.velite/readings.json";
 import rawVisions from "../../.velite/visions.json";
 import { manualEdges } from "@/data/edges";
 import type { ManualEdge } from "../../velite.config";
 
-export type NodeKind = "post" | "project" | "paper" | "vision" | "experience";
+export type NodeKind = "post" | "project" | "paper" | "reading" | "vision" | "experience";
 export type Lane = "research" | "building" | "writing" | "personal";
 export type EdgeKind = ManualEdge["kind"];
 export type Edge = ManualEdge;
 
 export type ProjectStatus = "idea" | "active" | "shipped" | "shelved";
+export type ReadingStatus = "queued" | "reading" | "finished" | "paused" | "reference";
+export type ReadingWorkType = "book" | "paper" | "article" | "course" | "other";
 
 export type Node = {
   id: string;
@@ -40,6 +43,10 @@ export type Node = {
   venue?: string;
   bibKey?: string;
   pdf?: string;
+  workType?: ReadingWorkType;
+  readingStatus?: ReadingStatus;
+  source?: string;
+  url?: string;
   sceneId?: string;
   org?: string;
 };
@@ -68,37 +75,42 @@ type RawCollectionItem = {
   critiques?: string[];
 };
 
-const asCollection = (items: unknown): RawCollectionItem[] =>
-  items as RawCollectionItem[];
+const asCollection = (items: unknown): RawCollectionItem[] => items as RawCollectionItem[];
 
-const toNode = (kind: NodeKind) => (raw: RawCollectionItem): Node => {
-  const id = slugBase(raw.slug);
-  const extra = raw as Record<string, unknown>;
-  return {
-    id,
-    slug: raw.slug,
-    kind,
-    title: raw.title,
-    date: raw.date,
-    endDate: raw.endDate,
-    lane: raw.lane,
-    tags: raw.tags ?? [],
-    summary: raw.summary,
-    body: raw.body,
-    hero: raw.hero,
-    influences: raw.influences ?? [],
-    realizes: raw.realizes ?? [],
-    critiques: raw.critiques ?? [],
-    status: extra.status as ProjectStatus | undefined,
-    links: extra.links as Node["links"],
-    authors: extra.authors as string[] | undefined,
-    venue: extra.venue as string | undefined,
-    bibKey: extra.bibKey as string | undefined,
-    pdf: extra.pdf as string | undefined,
-    sceneId: extra.sceneId as string | undefined,
-    org: extra.org as string | undefined,
+const toNode =
+  (kind: NodeKind) =>
+  (raw: RawCollectionItem): Node => {
+    const id = slugBase(raw.slug);
+    const extra = raw as Record<string, unknown>;
+    return {
+      id,
+      slug: raw.slug,
+      kind,
+      title: raw.title,
+      date: raw.date,
+      endDate: raw.endDate,
+      lane: raw.lane,
+      tags: raw.tags ?? [],
+      summary: raw.summary,
+      body: raw.body,
+      hero: raw.hero,
+      influences: raw.influences ?? [],
+      realizes: raw.realizes ?? [],
+      critiques: raw.critiques ?? [],
+      status: kind === "project" ? (extra.status as ProjectStatus | undefined) : undefined,
+      links: extra.links as Node["links"],
+      authors: extra.authors as string[] | undefined,
+      venue: extra.venue as string | undefined,
+      bibKey: extra.bibKey as string | undefined,
+      pdf: extra.pdf as string | undefined,
+      workType: extra.workType as ReadingWorkType | undefined,
+      readingStatus: kind === "reading" ? (extra.status as ReadingStatus | undefined) : undefined,
+      source: extra.source as string | undefined,
+      url: extra.url as string | undefined,
+      sceneId: extra.sceneId as string | undefined,
+      org: extra.org as string | undefined,
+    };
   };
-};
 
 let cached: Graph | null = null;
 
@@ -109,6 +121,7 @@ export function getGraph(): Graph {
     ...asCollection(rawPosts).map(toNode("post")),
     ...asCollection(rawProjects).map(toNode("project")),
     ...asCollection(rawPapers).map(toNode("paper")),
+    ...asCollection(rawReadings).map(toNode("reading")),
     ...asCollection(rawVisions).map(toNode("vision")),
     ...asCollection(rawExperience).map(toNode("experience")),
   ];
@@ -132,12 +145,9 @@ export function getGraph(): Graph {
   };
 
   for (const n of nodes) {
-    for (const t of n.influences)
-      addEdge({ source: n.id, target: t, kind: "influence" });
-    for (const t of n.realizes)
-      addEdge({ source: n.id, target: t, kind: "realization" });
-    for (const t of n.critiques)
-      addEdge({ source: n.id, target: t, kind: "critique" });
+    for (const t of n.influences) addEdge({ source: n.id, target: t, kind: "influence" });
+    for (const t of n.realizes) addEdge({ source: n.id, target: t, kind: "realization" });
+    for (const t of n.critiques) addEdge({ source: n.id, target: t, kind: "critique" });
   }
   for (const e of manualEdges) addEdge(e);
 

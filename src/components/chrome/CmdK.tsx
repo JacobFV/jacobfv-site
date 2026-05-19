@@ -60,9 +60,7 @@ export function CmdK({ nodes }: Props) {
 
   const results = useMemo(() => {
     if (!query) {
-      return [...nodes]
-        .sort((a, b) => (a.date < b.date ? 1 : -1))
-        .slice(0, 8);
+      return [...nodes].sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 8);
     }
     return fuse.search(query, { limit: 12 }).map((r) => r.item);
   }, [query, fuse, nodes]);
@@ -215,21 +213,18 @@ export function CmdK({ nodes }: Props) {
                 }}
               />
               <ActionItem
-                label="Open the constellation"
-                onSelect={() => go("/graph")}
+                label="Open most recent reading"
+                onSelect={() => {
+                  const recent = [...nodes]
+                    .filter((n) => n.kind === "reading")
+                    .sort((a, b) => (a.date < b.date ? 1 : -1))[0];
+                  if (recent) go(`/${recent.id}`);
+                }}
               />
-              <ActionItem
-                label="Back to portfolio home"
-                onSelect={() => go("/")}
-              />
-              <ActionItem
-                label="Switch to timeline"
-                onSelect={() => go("/t")}
-              />
-              <ActionItem
-                label="Open the now dock"
-                onSelect={() => go("/now")}
-              />
+              <ActionItem label="Open the constellation" onSelect={() => go("/graph")} />
+              <ActionItem label="Back to portfolio home" onSelect={() => go("/")} />
+              <ActionItem label="Switch to timeline" onSelect={() => go("/t")} />
+              <ActionItem label="Open the now dock" onSelect={() => go("/now")} />
             </Command.Group>
           </Command.List>
         </Command>

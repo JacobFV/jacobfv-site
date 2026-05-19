@@ -12,13 +12,12 @@ const escape = (s: string) =>
 
 const rfc822 = (iso: string) => new Date(iso).toUTCString();
 
-// Static RSS 2.0 feed of every post node, newest first. Posts and papers
-// are the things readers subscribe to; projects and visions get
-// announced through posts when they're worth announcing.
+// Static RSS 2.0 feed of every writing-adjacent node, newest first.
+// Projects and visions get announced through posts when they're worth announcing.
 export function GET() {
   const { nodes } = getGraph();
   const items = nodes
-    .filter((n) => n.kind === "post" || n.kind === "paper")
+    .filter((n) => n.kind === "post" || n.kind === "paper" || n.kind === "reading")
     .sort((a, b) => (a.date < b.date ? 1 : -1))
     .slice(0, 50);
 
@@ -41,7 +40,7 @@ export function GET() {
   <channel>
     <title>Jacob Valdez</title>
     <link>${BASE}/</link>
-    <description>Posts and papers from jacobfv.com.</description>
+    <description>Posts, papers, and readings from jacobfv.com.</description>
     <language>en</language>
     <atom:link href="${BASE}/feed.xml" rel="self" type="application/rss+xml" />
     <lastBuildDate>${rfc822(new Date().toISOString())}</lastBuildDate>${itemsXml}

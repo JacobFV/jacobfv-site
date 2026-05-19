@@ -25,9 +25,7 @@ const fmtDate = (iso: string) => new Date(iso).toISOString().slice(0, 10);
 // Featured projects: shipped or active first, then by recency. Cap at 6.
 function pickFeatured(nodes: Node[]): Node[] {
   const candidates = nodes.filter(
-    (n) =>
-      n.kind === "project" &&
-      (n.status === "active" || n.status === "shipped"),
+    (n) => n.kind === "project" && (n.status === "active" || n.status === "shipped"),
   );
   // Manual override — pin a few load-bearing ones to the top regardless of date.
   const pinned = ["computatrum", "limboid", "jacobfv-site", "canvas-engineering"];
@@ -52,6 +50,10 @@ export default function HomePage() {
     .filter((n) => n.kind === "paper")
     .sort((a, b) => (a.date < b.date ? 1 : -1))
     .slice(0, 3);
+  const recentReadings = nodes
+    .filter((n) => n.kind === "reading")
+    .sort((a, b) => (a.date < b.date ? 1 : -1))
+    .slice(0, 4);
 
   const searchable = nodes.map((n) => ({
     id: n.id,
@@ -67,75 +69,82 @@ export default function HomePage() {
     <>
       <main className="mx-auto max-w-5xl px-6 pt-24 pb-32">
         {/* ---- Hero ---- */}
-        <section className="mb-32 grid gap-12 md:grid-cols-[1.4fr_1fr]">
-          <div>
-            <p className="mb-4 font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.18em] text-[var(--color-ink-mute)]">
-              Jacob Valdez · building VibeStartup
-            </p>
-            <h1
-              className="font-[family-name:var(--font-display)] text-5xl leading-[0.98] tracking-tight text-[var(--color-ink)] sm:text-6xl md:text-7xl"
-              style={{ fontVariationSettings: '"opsz" 144' }}
-            >
-              Software engineer building AI systems, end to end.
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-[1.65] text-[var(--color-ink-dim)]">
-              Currently building <a href="https://vibestartup.pro" target="_blank" rel="noreferrer" className="text-[var(--color-ink)] underline decoration-[var(--color-ink-mute)] underline-offset-2 hover:decoration-[var(--color-accent)]">VibeStartup</a> —
-              a platform for building startups end to end.
-              Most recently API/Integration Architect at <a href="https://agi.app" target="_blank" rel="noreferrer" className="text-[var(--color-ink)] underline decoration-[var(--color-ink-mute)] underline-offset-2 hover:decoration-[var(--color-accent)]">AGI, Inc.</a>,
-              shipping APIs, integrations, and agent infrastructure for
-              on-device mobile AI agents. Earlier: Breezy, Deepshard,
-              Motio, and UTA research labs. BS Computer Science from
-              UT Arlington. I love science and engineering and people —
-              this site maps the arguments behind the work.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3 font-[family-name:var(--font-mono)] text-xs">
-              <Link
-                href="/graph"
-                className="rounded border border-[var(--color-bg-2)] px-3 py-2 text-[var(--color-ink)] no-underline hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
-              >
-                explore as a graph →
-              </Link>
-              <Link
-                href="/t"
-                className="rounded border border-[var(--color-bg-2)] px-3 py-2 text-[var(--color-ink-dim)] no-underline hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
-              >
-                timeline
-              </Link>
-              <Link
-                href="/loop"
-                className="rounded border border-[var(--color-bg-2)] px-3 py-2 text-[var(--color-ink-dim)] no-underline hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
-              >
-                /loop — book notes
-              </Link>
-              <Link
-                href="/resume"
-                className="rounded border border-[var(--color-bg-2)] px-3 py-2 text-[var(--color-ink-dim)] no-underline hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
-              >
-                resume
-              </Link>
-            </div>
-          </div>
+        <section className="mb-32 flex flex-col items-center text-center">
+          <Image
+            src="/img/prof_pic.jpg"
+            alt="Jacob Valdez"
+            width={200}
+            height={200}
+            priority
+            className="rounded-full border border-[var(--color-bg-2)] grayscale-[15%]"
+            style={{ width: 200, height: 200, objectFit: "cover" }}
+          />
+          <h1
+            className="mt-6 font-[family-name:var(--font-display)] text-5xl tracking-tight text-[var(--color-ink)] sm:text-6xl"
+            style={{ fontVariationSettings: '"opsz" 144' }}
+          >
+            Jacob Valdez
+          </h1>
 
-          <div className="flex flex-col items-end gap-6">
-            <Image
-              src="/img/prof_pic.jpg"
-              alt="Jacob Valdez"
-              width={220}
-              height={260}
-              priority
-              className="block border border-[var(--color-bg-2)] grayscale-[15%]"
-              style={{
-                width: "100%",
-                maxWidth: 260,
-                height: "auto",
-                objectFit: "cover",
-              }}
-            />
-            <NowPanel
-              building={now.building}
-              reading={now.reading}
-              updated={now.updated}
-            />
+          {/* TODO: wire this up — for now it's a UI-only stub with no handler. */}
+          <input
+            type="text"
+            placeholder="Ask me anything!"
+            aria-label="Ask me anything"
+            className="mt-8 w-full max-w-xl rounded-full border border-[var(--color-bg-2)] bg-[var(--color-bg-1)] px-5 py-3 text-base text-[var(--color-ink)] placeholder:text-[var(--color-ink-mute)] focus:border-[var(--color-accent)] focus:outline-none"
+          />
+
+          <p className="mt-10 max-w-2xl text-left text-lg leading-[1.65] text-[var(--color-ink-dim)]">
+            Currently building{" "}
+            <a
+              href="https://vibestartup.pro"
+              target="_blank"
+              rel="noreferrer"
+              className="text-[var(--color-ink)] underline decoration-[var(--color-ink-mute)] underline-offset-2 hover:decoration-[var(--color-accent)]"
+            >
+              VibeStartup
+            </a>{" "}
+            — a platform for building startups end to end. Most recently API/Integration Architect
+            at{" "}
+            <a
+              href="https://agi.app"
+              target="_blank"
+              rel="noreferrer"
+              className="text-[var(--color-ink)] underline decoration-[var(--color-ink-mute)] underline-offset-2 hover:decoration-[var(--color-accent)]"
+            >
+              AGI, Inc.
+            </a>
+            , shipping APIs, integrations, and agent infrastructure for on-device mobile AI agents.
+            Earlier: Breezy, Deepshard, Motio, and UTA research labs. BS Computer Science from UT
+            Arlington. I love science and engineering and people — this site maps the arguments
+            behind the work.
+          </p>
+
+          <div className="mt-8 flex flex-wrap justify-center gap-2 font-[family-name:var(--font-mono)] text-xs">
+            <Link
+              href="/graph"
+              className="rounded-full border border-[var(--color-bg-2)] px-4 py-1.5 text-[var(--color-ink)] no-underline hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+            >
+              explore as a graph →
+            </Link>
+            <Link
+              href="/t"
+              className="rounded-full border border-[var(--color-bg-2)] px-4 py-1.5 text-[var(--color-ink-dim)] no-underline hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+            >
+              timeline
+            </Link>
+            <Link
+              href="/loop"
+              className="rounded-full border border-[var(--color-bg-2)] px-4 py-1.5 text-[var(--color-ink-dim)] no-underline hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+            >
+              /loop — book notes
+            </Link>
+            <Link
+              href="/resume"
+              className="rounded-full border border-[var(--color-bg-2)] px-4 py-1.5 text-[var(--color-ink-dim)] no-underline hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+            >
+              resume
+            </Link>
           </div>
         </section>
 
@@ -166,6 +175,23 @@ export default function HomePage() {
             ))}
           </ul>
         </Section>
+
+        {/* ---- Readings ---- */}
+        {recentReadings.length > 0 && (
+          <Section
+            eyebrow="Reading"
+            title="What I'm reading"
+            link={{ href: "/list", label: "all readings →" }}
+          >
+            <ul className="divide-y divide-[var(--color-bg-2)]">
+              {recentReadings.map((n) => (
+                <li key={n.id}>
+                  <RowLink node={n} />
+                </li>
+              ))}
+            </ul>
+          </Section>
+        )}
 
         {/* ---- Papers ---- */}
         {recentPapers.length > 0 && (
@@ -213,18 +239,18 @@ export default function HomePage() {
               </a>
             </div>
             <div className="opacity-60">
-              Press <kbd className="rounded border border-[var(--color-bg-2)] bg-[var(--color-bg-1)] px-1.5 py-0.5 font-[family-name:var(--font-mono)]">⌘K</kbd> to search.
+              Press{" "}
+              <kbd className="rounded border border-[var(--color-bg-2)] bg-[var(--color-bg-1)] px-1.5 py-0.5 font-[family-name:var(--font-mono)]">
+                ⌘K
+              </kbd>{" "}
+              to search.
             </div>
           </div>
         </footer>
       </main>
 
       <CmdK nodes={searchable} />
-      <NowDock
-        building={now.building}
-        reading={now.reading}
-        updated={now.updated}
-      />
+      <NowDock building={now.building} reading={now.reading} updated={now.updated} />
     </>
   );
 }
@@ -244,7 +270,7 @@ function Section({
     <section className="mt-24">
       <div className="mb-8 flex items-baseline justify-between gap-6">
         <div>
-          <p className="font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.16em] text-[var(--color-ink-mute)]">
+          <p className="font-[family-name:var(--font-mono)] text-xs tracking-[0.16em] text-[var(--color-ink-mute)] uppercase">
             {eyebrow}
           </p>
           <h2
@@ -275,7 +301,7 @@ function ProjectCard({ node }: { node: Node }) {
       href={`/${node.id}`}
       className="group block rounded border border-[var(--color-bg-2)] p-5 no-underline transition-colors hover:border-[var(--color-accent)]/40"
     >
-      <div className="mb-3 flex items-baseline gap-2 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-wider text-[var(--color-ink-mute)]">
+      <div className="mb-3 flex items-baseline gap-2 font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-[var(--color-ink-mute)] uppercase">
         <span className={laneClass[node.lane]}>{node.lane}</span>
         <span className="opacity-40">·</span>
         <span>{status}</span>
@@ -294,52 +320,14 @@ function ProjectCard({ node }: { node: Node }) {
 
 function RowLink({ node }: { node: Node }) {
   return (
-    <Link
-      href={`/${node.id}`}
-      className="group flex items-baseline gap-4 py-3 no-underline"
-    >
+    <Link href={`/${node.id}`} className="group flex items-baseline gap-4 py-3 no-underline">
       <time className="w-20 shrink-0 font-[family-name:var(--font-mono)] text-xs text-[var(--color-ink-mute)]">
         {fmtDate(node.date)}
       </time>
-      <span
-        className={`mt-2 h-1.5 w-1.5 shrink-0 rounded ${laneBg[node.lane]}`}
-        aria-hidden
-      />
+      <span className={`mt-2 h-1.5 w-1.5 shrink-0 rounded ${laneBg[node.lane]}`} aria-hidden />
       <span className="text-[var(--color-ink)] group-hover:text-[var(--color-accent)]">
         {node.title}
       </span>
-    </Link>
-  );
-}
-
-function NowPanel({
-  building,
-  reading,
-  updated,
-}: {
-  building: string;
-  reading?: string;
-  updated: string;
-}) {
-  return (
-    <Link
-      href="/now"
-      className="block w-full rounded border border-[var(--color-bg-2)] p-6 no-underline hover:border-[var(--color-accent)]/40"
-    >
-      <div className="mb-4 flex items-baseline justify-between font-[family-name:var(--font-mono)] text-xs text-[var(--color-ink-mute)]">
-        <span className="uppercase tracking-[0.16em]">now</span>
-        <span>{updated}</span>
-      </div>
-      <dl className="grid grid-cols-[78px_1fr] gap-y-2 font-[family-name:var(--font-mono)] text-sm">
-        <dt className="text-[var(--color-ink-mute)]">building</dt>
-        <dd className="text-[var(--color-ink)]">{building}</dd>
-        {reading && (
-          <>
-            <dt className="text-[var(--color-ink-mute)]">reading</dt>
-            <dd className="text-[var(--color-ink)]">{reading}</dd>
-          </>
-        )}
-      </dl>
     </Link>
   );
 }

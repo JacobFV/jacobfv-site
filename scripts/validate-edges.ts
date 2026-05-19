@@ -20,13 +20,7 @@ import { manualEdges } from "../src/data/edges";
 const NEW = process.cwd();
 const VELITE = path.join(NEW, ".velite");
 
-const COLLECTIONS = [
-  "posts",
-  "projects",
-  "papers",
-  "visions",
-  "experience",
-] as const;
+const COLLECTIONS = ["posts", "projects", "papers", "readings", "visions", "experience"] as const;
 
 type Edge = {
   source: string;
@@ -154,9 +148,7 @@ async function main() {
   for (const e of allEdges) {
     inDegree[e.target] = (inDegree[e.target] ?? 0) + 1;
   }
-  const orphans = Array.from(ids).filter(
-    (id) => !outDegree[id] && !inDegree[id],
-  );
+  const orphans = Array.from(ids).filter((id) => !outDegree[id] && !inDegree[id]);
 
   // ---- Report --------------------------------------------------------
   console.log("");
@@ -168,7 +160,11 @@ async function main() {
 
   if (missing.length === 0) console.log(green("✓") + " all edges resolve to a real node id");
   else {
-    console.log(red(`✖ ${missing.length} edge${missing.length === 1 ? "" : "s"} reference a missing node id:`));
+    console.log(
+      red(
+        `✖ ${missing.length} edge${missing.length === 1 ? "" : "s"} reference a missing node id:`,
+      ),
+    );
     for (const m of missing) {
       const e = m.edge;
       console.log(
@@ -179,7 +175,9 @@ async function main() {
 
   if (duplicates.length === 0) console.log(green("✓") + " no duplicate edges");
   else {
-    console.log(yellow(`! ${duplicates.length} duplicated edge${duplicates.length === 1 ? "" : "s"}:`));
+    console.log(
+      yellow(`! ${duplicates.length} duplicated edge${duplicates.length === 1 ? "" : "s"}:`),
+    );
     for (const dups of duplicates) {
       const head = dups[0];
       console.log(
@@ -190,15 +188,18 @@ async function main() {
 
   if (selfEdges.length === 0) console.log(green("✓") + " no self-edges");
   else {
-    console.log(red(`✖ ${selfEdges.length} self-edge${selfEdges.length === 1 ? "" : "s"} (a node points to itself):`));
+    console.log(
+      red(
+        `✖ ${selfEdges.length} self-edge${selfEdges.length === 1 ? "" : "s"} (a node points to itself):`,
+      ),
+    );
     for (const e of selfEdges)
       console.log(`  ${e.source} -> ${e.target} (${e.kind})  ${dim("from")} ${e.origin}`);
   }
 
   if (badWeights.length > 0) {
     console.log(yellow(`! ${badWeights.length} weight outside [0, 1]:`));
-    for (const e of badWeights)
-      console.log(`  ${e.source} -> ${e.target}  weight=${e.weight}`);
+    for (const e of badWeights) console.log(`  ${e.source} -> ${e.target}  weight=${e.weight}`);
   }
   if (unweightedManual.length > 0) {
     console.log(

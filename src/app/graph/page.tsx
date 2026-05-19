@@ -5,7 +5,7 @@ import { getGraph } from "@/lib/graph";
 export const metadata = {
   title: "Constellation · Jacob Valdez",
   description:
-    "A slow-rotating sphere of every node — projects, posts, papers, visions. Drag to rotate, scroll to zoom, tap a node to read.",
+    "A slow-rotating sphere of every node — projects, posts, papers, readings, visions. Drag to rotate, scroll to zoom, tap a node to read.",
 };
 
 export default function GraphPage() {

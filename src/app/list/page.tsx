@@ -12,6 +12,7 @@ const kindLabel: Record<NodeKind, string> = {
   post: "post",
   project: "project",
   paper: "paper",
+  reading: "reading",
   vision: "vision",
   experience: "experience",
 };
@@ -34,18 +35,15 @@ export default function ListPage() {
           Index
         </h1>
         <p className="mt-3 text-[var(--color-ink-dim)]">
-          Flat list of every node — accessible mirror of the constellation
-          at <Link href="/graph">/graph</Link>.
+          Flat list of every node — accessible mirror of the constellation at{" "}
+          <Link href="/graph">/graph</Link>.
         </p>
       </header>
 
       <ul className="divide-y divide-[var(--color-bg-2)]">
         {sorted.map((n) => (
           <li key={n.id} className="py-4">
-            <Link
-              href={`/${n.id}`}
-              className="group flex flex-col gap-1 no-underline"
-            >
+            <Link href={`/${n.id}`} className="group flex flex-col gap-1 no-underline">
               <div className="flex items-baseline gap-3 font-[family-name:var(--font-mono)] text-xs text-[var(--color-ink-mute)]">
                 <time>{formatDate(n.date)}</time>
                 <span className={laneClass[n.lane]}>{n.lane}</span>
@@ -55,9 +53,7 @@ export default function ListPage() {
               <div className="text-lg text-[var(--color-ink)] group-hover:text-[var(--color-accent)]">
                 {n.title}
               </div>
-              <div className="text-sm text-[var(--color-ink-dim)]">
-                {n.summary}
-              </div>
+              <div className="text-sm text-[var(--color-ink-dim)]">{n.summary}</div>
             </Link>
           </li>
         ))}

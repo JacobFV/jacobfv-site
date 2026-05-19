@@ -2,7 +2,7 @@
 
 Personal site for Jacob Valdez — a navigable map of projects, writing, and visions, not a list of pages.
 
-Replaces the current Jekyll/al-folio site at `../jacobfv.github.io` with a Next.js app where every artifact is a node in a graph and the navigation *is* the relationship between them.
+Replaces the current Jekyll/al-folio site at `../jacobfv.github.io` with a Next.js app where every artifact is a node in a graph and the navigation _is_ the relationship between them.
 
 ## Status
 
@@ -10,7 +10,7 @@ Replaces the current Jekyll/al-folio site at `../jacobfv.github.io` with a Next.
 
 ## North star
 
-> *The mind of Jacob, navigable.*
+> _The mind of Jacob, navigable._
 
 Three viewing modes over one URL space, no full page reloads:
 
@@ -20,7 +20,7 @@ Three viewing modes over one URL space, no full page reloads:
 
 Plus:
 
-- **`/loop`** — *A Beautiful Loop* book draft as a scrollytelling experience.
+- **`/loop`** — _A Beautiful Loop_ book draft as a scrollytelling experience.
 - **3D vision room** — `_bio/focus-statement` and 5-year-vision essays rendered as a Three.js scene the visitor walks through.
 - **Cmd-K palette** — replaces nav. Jump to any node, switch modes, search.
 - **`now` dock** — persistent corner widget showing what's current (project, post, commit).
@@ -46,6 +46,7 @@ jacobfv-site/
 │   ├── posts/                # blog posts (migrated from ../jacobfv.github.io/_posts)
 │   ├── projects/             # projects (migrated from _projects)
 │   ├── papers/               # papers + .bib references
+│   ├── readings/             # books, papers, courses, articles being read
 │   ├── visions/              # bio essays, focus statement, 5-year vision
 │   ├── experience/           # roles, education
 │   └── now/                  # current state, single file kept fresh

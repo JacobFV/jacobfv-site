@@ -25,25 +25,25 @@ Single source of truth: the merged `Graph`. Every view is a projection.
 
 ## Node model
 
-Five node kinds, all share a base:
+Six node kinds, all share a base:
 
 ```ts
-type NodeKind = "post" | "project" | "paper" | "vision" | "experience";
+type NodeKind = "post" | "project" | "paper" | "reading" | "vision" | "experience";
 
 type Node = {
-  id: string;          // stable slug, used in URLs
+  id: string; // stable slug, used in URLs
   kind: NodeKind;
   title: string;
-  date: string;        // ISO; for projects, the start date
-  endDate?: string;    // for experience and multi-year projects
+  date: string; // ISO; for projects, the start date
+  endDate?: string; // for experience and multi-year projects
   lane: "research" | "building" | "writing" | "personal";
   tags: string[];
-  summary: string;     // 1–2 sentences, shown in cards & graph hover
-  body: string;        // MDX-compiled HTML or raw for client MDX
+  summary: string; // 1–2 sentences, shown in cards & graph hover
+  body: string; // MDX-compiled HTML or raw for client MDX
   hero?: { src: string; alt: string };
   influences?: string[]; // ids of nodes this node draws from
-  realizes?: string[];   // ids of visions/ideas this node makes real
-  critiques?: string[];  // ids this node argues against
+  realizes?: string[]; // ids of visions/ideas this node makes real
+  critiques?: string[]; // ids this node argues against
 };
 ```
 
@@ -55,11 +55,11 @@ type Node = {
 type EdgeKind = "influence" | "realization" | "critique" | "collaboration";
 
 type Edge = {
-  source: string;   // node id
-  target: string;   // node id
+  source: string; // node id
+  target: string; // node id
   kind: EdgeKind;
-  weight?: number;  // 0–1, controls visual prominence
-  note?: string;    // optional one-liner, shown on hover
+  weight?: number; // 0–1, controls visual prominence
+  note?: string; // optional one-liner, shown on hover
 };
 ```
 
@@ -69,17 +69,17 @@ Edges are derived from frontmatter first, then `edges.ts` augments. Duplicates d
 
 App Router, no traditional page reloads — every "navigation" is a Framer Motion shared-layout animation.
 
-| Route | Purpose |
-|---|---|
-| `/` | Constellation. Default mode. |
-| `/t` | Timeline. Same graph, different projection. |
-| `/[slug]` | Node detail. Slug = node id. Polymorphic by `node.kind`. |
-| `/loop` | A Beautiful Loop scrollytelling. Standalone layout. |
-| `/loop/[chapter]` | Chapter routes within Loop. |
-| `/now` | Full version of the corner dock. |
-| `/api/search` | Client search index endpoint (or static JSON). |
+| Route             | Purpose                                                  |
+| ----------------- | -------------------------------------------------------- |
+| `/`               | Constellation. Default mode.                             |
+| `/t`              | Timeline. Same graph, different projection.              |
+| `/[slug]`         | Node detail. Slug = node id. Polymorphic by `node.kind`. |
+| `/loop`           | A Beautiful Loop scrollytelling. Standalone layout.      |
+| `/loop/[chapter]` | Chapter routes within Loop.                              |
+| `/now`            | Full version of the corner dock.                         |
+| `/api/search`     | Client search index endpoint (or static JSON).           |
 
-The `(graph)` route group shares a single layout that mounts the graph canvas once, so switching `/` ↔ `/t` is a state change, not a remount. Opening a node from either view animates *into* `/[slug]` without unmounting the graph (it slides to a minimap).
+The `(graph)` route group shares a single layout that mounts the graph canvas once, so switching `/` ↔ `/t` is a state change, not a remount. Opening a node from either view animates _into_ `/[slug]` without unmounting the graph (it slides to a minimap).
 
 ## Modes & transitions
 
