@@ -85,12 +85,23 @@ type Dust = {
 };
 
 const DUST: Dust[] = [
+  // Near-pfp specks.
   { cx: -132, cy: -86, ax: 14, ay: 10, wx: 0.6, wy: 0.4, px: 0.0, py: 1.0, size: 6, opacity: 0.55 },
   { cx:  138, cy: -98, ax: 12, ay: 14, wx: 0.5, wy: 0.7, px: 1.0, py: 0.0, size: 7, opacity: 0.5 },
   { cx:  -92, cy: 122, ax: 10, ay: 12, wx: 0.4, wy: 0.6, px: 2.0, py: 3.0, size: 5, opacity: 0.45 },
   { cx:  108, cy: 132, ax: 16, ay:  8, wx: 0.7, wy: 0.5, px: 4.0, py: 5.0, size: 6, opacity: 0.45 },
+  { cx: -180, cy: -140, ax:  8, ay: 10, wx: 0.5, wy: 0.7, px: 1.2, py: 2.1, size: 4, opacity: 0.4 },
+  { cx:  176, cy: -156, ax: 10, ay:  8, wx: 0.6, wy: 0.4, px: 3.8, py: 0.6, size: 5, opacity: 0.42 },
+  { cx:  -40, cy: -210, ax: 12, ay:  6, wx: 0.4, wy: 0.6, px: 2.7, py: 4.3, size: 4, opacity: 0.4 },
+  { cx:   70, cy: -180, ax:  8, ay: 12, wx: 0.7, wy: 0.5, px: 5.4, py: 1.4, size: 4, opacity: 0.42 },
+  { cx: -260, cy:  -40, ax: 10, ay: 14, wx: 0.5, wy: 0.6, px: 0.9, py: 2.9, size: 3, opacity: 0.38 },
+  { cx:  240, cy:  -30, ax: 12, ay: 10, wx: 0.6, wy: 0.4, px: 4.1, py: 1.6, size: 3, opacity: 0.38 },
+  // Drifty far-field specks — slow large-amplitude motion sells a sense
+  // of distant motion behind the planets.
   { cx: -362, cy:  178, ax: 40, ay: 28, wx: 0.08, wy: 0.06, px: 0.5, py: 2.2, size: 4, opacity: 0.4 },
   { cx:  336, cy: -182, ax: 36, ay: 30, wx: 0.09, wy: 0.07, px: 1.3, py: 0.7, size: 4, opacity: 0.4 },
+  { cx: -310, cy: -290, ax: 22, ay: 16, wx: 0.10, wy: 0.08, px: 2.0, py: 0.3, size: 3, opacity: 0.32 },
+  { cx:  290, cy: -300, ax: 24, ay: 20, wx: 0.07, wy: 0.09, px: 1.7, py: 3.4, size: 3, opacity: 0.32 },
 ];
 
 const laneText: Record<Lane, string> = {

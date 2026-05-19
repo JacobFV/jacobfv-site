@@ -147,18 +147,37 @@ export default function HomePage() {
     cx: number; cy: number; ax: number; ay: number;
     wx: number; wy: number; px: number; py: number; size: number;
   }> = [
-    // Inner ring — closer to the pfp, smaller bodies.
-    { source: { kind: "project", rank: 2 }, cx: -290, cy: -120, ax: 20, ay: 16, wx: 0.16, wy: 0.11, px: 0.0, py: 1.4, size: 38 },
-    { source: { kind: "project", rank: 3 }, cx:  300, cy: -110, ax: 18, ay: 20, wx: 0.13, wy: 0.18, px: 0.8, py: 0.3, size: 36 },
+    // Inner ring — closer to the pfp, the four pinned projects from
+    // featured.slice(2): limboid, computatrum, jacobfv-site,
+    // canvas-engineering. Note that rank here indexes sourcePool.project,
+    // which already drops featured[0..1] (those live in OrbitDecor).
+    { source: { kind: "project", rank: 0 }, cx: -290, cy: -120, ax: 20, ay: 16, wx: 0.16, wy: 0.11, px: 0.0, py: 1.4, size: 38 },
+    { source: { kind: "project", rank: 1 }, cx:  300, cy: -110, ax: 18, ay: 20, wx: 0.13, wy: 0.18, px: 0.8, py: 0.3, size: 36 },
+    { source: { kind: "project", rank: 2 }, cx:  360, cy:   30, ax: 22, ay: 18, wx: 0.10, wy: 0.14, px: 2.1, py: 2.7, size: 34 },
+    { source: { kind: "project", rank: 3 }, cx: -360, cy:   10, ax: 18, ay: 22, wx: 0.18, wy: 0.12, px: 3.4, py: 0.9, size: 32 },
+    // Upper hemisphere — posts arcing across the top, where the mask is
+    // fully opaque so motion reads clearly.
     { source: { kind: "post",    rank: 0 }, cx:    0, cy: -320, ax: 22, ay: 14, wx: 0.10, wy: 0.16, px: 2.4, py: 1.0, size: 30 },
     { source: { kind: "post",    rank: 1 }, cx: -240, cy: -260, ax: 16, ay: 18, wx: 0.18, wy: 0.10, px: 3.6, py: 2.2, size: 28 },
-    // Outer ring — farther out, varied kinds.
-    { source: { kind: "project", rank: 4 }, cx:  360, cy:   30, ax: 22, ay: 18, wx: 0.10, wy: 0.14, px: 2.1, py: 2.7, size: 34 },
-    { source: { kind: "project", rank: 5 }, cx: -360, cy:   10, ax: 18, ay: 22, wx: 0.18, wy: 0.12, px: 3.4, py: 0.9, size: 32 },
+    { source: { kind: "post",    rank: 2 }, cx:  150, cy: -220, ax: 14, ay: 18, wx: 0.14, wy: 0.17, px: 1.1, py: 2.4, size: 26 },
+    { source: { kind: "post",    rank: 3 }, cx: -150, cy: -190, ax: 16, ay: 12, wx: 0.19, wy: 0.13, px: 4.2, py: 1.1, size: 26 },
+    { source: { kind: "post",    rank: 4 }, cx:  320, cy: -210, ax: 16, ay: 14, wx: 0.12, wy: 0.16, px: 0.6, py: 3.8, size: 26 },
+    { source: { kind: "post",    rank: 5 }, cx: -330, cy: -200, ax: 18, ay: 16, wx: 0.15, wy: 0.10, px: 2.8, py: 0.5, size: 28 },
+    // Crown — events + skills along the top fringe.
     { source: { kind: "event",   rank: 0 }, cx:  260, cy: -280, ax: 18, ay: 14, wx: 0.12, wy: 0.20, px: 1.6, py: 0.4, size: 28 },
+    { source: { kind: "skill",   rank: 1 }, cx:  180, cy: -340, ax: 18, ay: 12, wx: 0.11, wy: 0.18, px: 3.3, py: 1.7, size: 22 },
+    { source: { kind: "skill",   rank: 2 }, cx: -180, cy: -340, ax: 16, ay: 14, wx: 0.17, wy: 0.14, px: 5.1, py: 3.2, size: 22 },
+    // Halo — friends close to the pfp.
+    { source: { kind: "friend",  rank: 1 }, cx:  -50, cy: -160, ax: 12, ay: 16, wx: 0.20, wy: 0.13, px: 1.9, py: 4.1, size: 22 },
+    { source: { kind: "friend",  rank: 2 }, cx:   60, cy: -160, ax: 14, ay: 14, wx: 0.16, wy: 0.18, px: 4.7, py: 2.0, size: 22 },
+    // Lower fringe — bodies in the soft-fade region. They fade in/out as
+    // the mask's vertical gradient permits, which gives the field depth
+    // without crowding the text below.
+    { source: { kind: "skill",   rank: 0 }, cx:  -80, cy:   50, ax: 14, ay: 10, wx: 0.18, wy: 0.20, px: 2.3, py: 4.4, size: 22 },
+    { source: { kind: "event",   rank: 2 }, cx:  140, cy:   60, ax: 12, ay: 14, wx: 0.22, wy: 0.11, px: 5.6, py: 0.8, size: 22 },
     { source: { kind: "event",   rank: 1 }, cx:  220, cy:  220, ax: 14, ay: 16, wx: 0.15, wy: 0.13, px: 0.3, py: 3.0, size: 26 },
     { source: { kind: "friend",  rank: 0 }, cx: -220, cy:  220, ax: 14, ay: 16, wx: 0.17, wy: 0.09, px: 2.7, py: 1.8, size: 26 },
-    { source: { kind: "skill",   rank: 0 }, cx:   80, cy:  280, ax: 14, ay: 12, wx: 0.20, wy: 0.16, px: 4.5, py: 2.5, size: 24 },
+    { source: { kind: "event",   rank: 3 }, cx:   80, cy:  280, ax: 14, ay: 12, wx: 0.20, wy: 0.16, px: 4.5, py: 2.5, size: 24 },
   ];
 
   const sourcePool: Record<PlanetSource["kind"], Node[]> = {
@@ -172,7 +191,7 @@ export default function HomePage() {
   const planets = planetSlots.flatMap((slot, i) => {
     const node = sourcePool[slot.source.kind]?.[slot.source.rank];
     if (!node) return [];
-    // Up to 2 neighbors, preferring outbound edges. The wider this net,
+    // Up to 3 neighbors, preferring outbound edges. The wider this net,
     // the noisier — keep it tight so moons look related, not random.
     const neighborIds = graph
       .neighbors(node.id)
@@ -181,7 +200,7 @@ export default function HomePage() {
     const moonNodes = Array.from(new Set(neighborIds))
       .map((id) => graph.byId.get(id))
       .filter((n): n is Node => Boolean(n))
-      .slice(0, 2);
+      .slice(0, 3);
     const moons = moonNodes.map((m, j) => ({
       id: m.id,
       title: m.title,
