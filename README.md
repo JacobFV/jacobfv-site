@@ -76,8 +76,10 @@ jacobfv-site/
 │   ├── ARCHITECTURE.md       # how the graph + modes fit together
 │   ├── CONTENT_MODEL.md      # node types, frontmatter, edges schema
 │   ├── DESIGN.md             # motion, typography, color, sound
+│   ├── PORTFOLIO_PRINCIPLES.md  # what makes a portfolio worth visiting
 │   ├── ROADMAP.md            # phased plan: skeleton → cutover
 │   └── IMPLEMENTATION_PROMPT.md  # paste into a fresh Claude session
+├── CLAUDE.md                 # agent-facing notes; read before edits
 ├── velite.config.ts
 ├── next.config.mjs
 ├── tailwind.config.ts

@@ -44,6 +44,10 @@ const projects = defineCollection({
       ...baseFields,
       slug: s.path(),
       status: s.enum(["idea", "active", "shipped", "shelved"]).default("active"),
+      // YouTube/Vimeo/self-hosted demo video. When present, the reader
+      // Hero renders it as a 16:9 embed. See docs/PORTFOLIO_PRINCIPLES.md
+      // — "visuals are a must".
+      video: s.string().optional(),
       links: s
         .object({
           github: s.string().optional(),

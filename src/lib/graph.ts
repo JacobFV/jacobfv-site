@@ -85,6 +85,7 @@ const toNode =
       realizes: raw.realizes ?? [],
       critiques: raw.critiques ?? [],
       status: kind === "project" ? (extra.status as ProjectStatus | undefined) : undefined,
+      video: kind === "project" ? (extra.video as string | undefined) : undefined,
       links: extra.links as Node["links"],
       authors: extra.authors as string[] | undefined,
       venue: extra.venue as string | undefined,

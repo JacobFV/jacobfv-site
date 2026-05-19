@@ -2,6 +2,11 @@
 
 What every node looks like and how to write one.
 
+> **Before writing a new project**, read [PORTFOLIO_PRINCIPLES.md](./PORTFOLIO_PRINCIPLES.md)
+> — it sets the 6-section MDX body template (Problem / Solution / How /
+> Tests / Results / Lessons) and the rules for when a project earns a
+> spotlight slot on the home page.
+
 ## Node kinds
 
 | Kind         | Source folder         | Example                                                                  |
@@ -51,6 +56,9 @@ status: shipped # idea | active | shipped | shelved
 tags: [agents, infra]
 summary: ...
 hero: { src: /img/projects/computatrum.png, alt: "..." }
+# Optional. YouTube / Vimeo / self-hosted demo. Renders as a 16:9
+# embed at the top of the project page.
+video: https://www.youtube.com/watch?v=...
 links:
   github: https://github.com/...
   demo: https://...
@@ -58,6 +66,10 @@ influences: [full-stack-artificial-intelligence]
 realizes: [vision-agent-os]
 ---
 ```
+
+For the body, follow the six-section template in
+[PORTFOLIO_PRINCIPLES.md](./PORTFOLIO_PRINCIPLES.md#project-page-body-template):
+Problem · Solution · How · Tests · Results · Lessons.
 
 ### paper
 

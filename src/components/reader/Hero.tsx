@@ -71,24 +71,90 @@ function KindMeta({ node }: { node: Node }) {
 }
 
 function ProjectMeta({ node }: { node: Node }) {
-  if (!node.links || Object.keys(node.links).length === 0) return null;
+  const hasLinks = node.links && Object.keys(node.links).length > 0;
+  if (!hasLinks && !node.video) return null;
   return (
-    <div className="mt-5 flex flex-wrap gap-3 font-[family-name:var(--font-mono)] text-xs">
-      {Object.entries(node.links).map(([k, v]) =>
-        v ? (
-          <a
-            key={k}
-            href={v}
-            target="_blank"
-            rel="noreferrer"
-            className="rounded-full bg-[var(--color-bg-1)] px-3 py-1 text-[var(--color-ink-dim)] no-underline hover:bg-[var(--color-bg-2)] hover:text-[var(--color-accent)]"
-          >
-            {k} ↗
-          </a>
-        ) : null,
+    <div className="mt-5 flex flex-col gap-5">
+      {node.video && <ProjectVideo url={node.video} title={node.title} />}
+      {hasLinks && (
+        <div className="flex flex-wrap gap-3 font-[family-name:var(--font-mono)] text-xs">
+          {Object.entries(node.links!).map(([k, v]) =>
+            v ? (
+              <a
+                key={k}
+                href={v}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full bg-[var(--color-bg-1)] px-3 py-1 text-[var(--color-ink-dim)] no-underline hover:bg-[var(--color-bg-2)] hover:text-[var(--color-accent)]"
+              >
+                {k} ↗
+              </a>
+            ) : null,
+          )}
+        </div>
       )}
     </div>
   );
+}
+
+// Embed a YouTube or Vimeo URL as a 16:9 iframe. For other hosts, fall
+// back to a plain link — saves us a brittle URL-shape catalogue.
+function ProjectVideo({ url, title }: { url: string; title: string }) {
+  const embed = toEmbedUrl(url);
+  if (!embed) {
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noreferrer"
+        className="rounded-full bg-[var(--color-bg-1)] px-3 py-1 text-[var(--color-ink-dim)] no-underline hover:bg-[var(--color-bg-2)] hover:text-[var(--color-accent)]"
+      >
+        watch demo ↗
+      </a>
+    );
+  }
+  return (
+    <div className="relative w-full overflow-hidden rounded-2xl bg-[var(--color-bg-1)]" style={{ aspectRatio: "16 / 9" }}>
+      <iframe
+        src={embed}
+        title={`${title} — demo video`}
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        className="absolute inset-0 h-full w-full"
+        style={{ border: 0 }}
+      />
+    </div>
+  );
+}
+
+function toEmbedUrl(raw: string): string | null {
+  try {
+    const u = new URL(raw);
+    // youtu.be/<id>
+    if (u.hostname === "youtu.be") {
+      return `https://www.youtube.com/embed/${u.pathname.slice(1)}`;
+    }
+    // youtube.com/watch?v=<id> | /embed/<id> | /shorts/<id>
+    if (u.hostname === "youtube.com" || u.hostname === "www.youtube.com") {
+      const v = u.searchParams.get("v");
+      if (v) return `https://www.youtube.com/embed/${v}`;
+      const m = u.pathname.match(/^\/(embed|shorts)\/([^/]+)/);
+      if (m) return `https://www.youtube.com/embed/${m[2]}`;
+    }
+    // vimeo.com/<id>
+    if (u.hostname === "vimeo.com" || u.hostname === "www.vimeo.com") {
+      const m = u.pathname.match(/^\/(\d+)/);
+      if (m) return `https://player.vimeo.com/video/${m[1]}`;
+    }
+    // Already an embed URL
+    if (u.pathname.includes("/embed/") || u.hostname === "player.vimeo.com") {
+      return raw;
+    }
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 function PaperMeta({ node }: { node: Node }) {

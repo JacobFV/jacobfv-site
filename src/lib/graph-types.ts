@@ -63,6 +63,9 @@ export type Node = {
 
   // kind-specific (all optional on the union)
   status?: ProjectStatus;
+  // Optional demo video URL (project kind). YouTube/Vimeo/embeddable
+  // page. Rendered in Hero as a 16:9 iframe when present.
+  video?: string;
   links?: Record<string, string | undefined>;
   authors?: string[];
   venue?: string;
