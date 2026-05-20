@@ -258,12 +258,15 @@ function EmbedPreview({ node }: { node: Node }) {
     );
   }
 
-  if (embed.kind === "x" && embed.url) {
+  if (embed.kind === "x" && (embed.url || embed.urls?.length)) {
+    const urls = embed.urls?.length ? embed.urls : embed.url ? [embed.url] : [];
     return (
-      <div className="rounded-2xl bg-[var(--color-bg-1)] p-4">
-        <blockquote className="twitter-tweet" data-theme="dark">
-          <a href={embed.url}>{embed.alt ?? node.title}</a>
-        </blockquote>
+      <div className="grid gap-4 rounded-2xl bg-[var(--color-bg-1)] p-4">
+        {urls.map((url, index) => (
+          <blockquote key={url} className="twitter-tweet" data-theme="dark">
+            <a href={url}>{index === 0 ? (embed.alt ?? node.title) : `${node.title} (${index + 1})`}</a>
+          </blockquote>
+        ))}
         <script async src="https://platform.twitter.com/widgets.js" charSet="utf-8" />
       </div>
     );

@@ -41,6 +41,7 @@ export type EventStatus = "upcoming" | "attended" | "presented" | "hosted" | "ca
 export type UpdateEmbed = {
   kind: "x" | "url" | "html";
   url?: string;
+  urls?: string[];
   html?: string;
   alt?: string;
 };

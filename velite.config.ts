@@ -103,6 +103,7 @@ const updates = defineCollection({
         .object({
           kind: s.enum(["x", "url", "html"]).default("url"),
           url: s.string().optional(),
+          urls: s.array(s.string()).optional(),
           html: s.string().optional(),
           alt: s.string().optional(),
         })
