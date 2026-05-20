@@ -3,12 +3,31 @@ import { nodeHref, type Node } from "@/lib/graph";
 
 const fmt = (iso?: string) => (iso ? new Date(iso).toISOString().slice(0, 10) : null);
 
+// Where the "back" breadcrumb on an artifact page points. Projects and
+// posts have home-page sections; everything else falls back to the flat
+// index. The SiteHeader is the site-wide nav — this is the local one.
+function backCrumb(kind: Node["kind"]): { label: string; href: string } {
+  switch (kind) {
+    case "project":
+      return { label: "Projects", href: "/#projects" };
+    case "post":
+      return { label: "Posts", href: "/#posts" };
+    case "update":
+      return { label: "Updates", href: "/updates" };
+    case "event":
+      return { label: "Events", href: "/events" };
+    default:
+      return { label: "Index", href: "/list" };
+  }
+}
+
 // Polymorphic hero. The shared `view-transition-name` lets the browser
 // FLIP-morph the constellation card into this block on navigation.
 export function Hero({ node }: { node: Node }) {
   const start = fmt(node.date);
   const end = fmt(node.endDate);
   const range = end ? `${start} – ${end}` : start;
+  const crumb = backCrumb(node.kind);
 
   return (
     <header
@@ -17,6 +36,13 @@ export function Hero({ node }: { node: Node }) {
       }}
       className="mb-10 border-b border-[var(--color-bg-2)]/60 pb-8"
     >
+      <Link
+        href={crumb.href}
+        className="mb-5 inline-flex items-center gap-1.5 font-[family-name:var(--font-mono)] text-xs text-[var(--color-ink-dim)] no-underline hover:text-[var(--color-accent)]"
+      >
+        <span aria-hidden>←</span> {crumb.label}
+      </Link>
+
       <div className="mb-3 flex items-baseline gap-3 font-[family-name:var(--font-mono)] text-xs text-[var(--color-ink-mute)]">
         <time>{range}</time>
         <span>·</span>

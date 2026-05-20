@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
-import { ThemeToggle } from "@/components/chrome/ThemeToggle";
+import { SiteHeader } from "@/components/chrome/SiteHeader";
+import { getGraph } from "@/lib/graph";
 import "./globals.css";
 
 // Pre-paint script: reads the stored theme (or system pref) and sets
@@ -47,6 +48,16 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const searchable = getGraph().nodes.map((n) => ({
+    id: n.id,
+    title: n.title,
+    summary: n.summary,
+    tags: n.tags,
+    lane: n.lane,
+    kind: n.kind,
+    date: n.date,
+  }));
+
   return (
     <html
       lang="en"
@@ -57,8 +68,8 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
       </head>
       <body>
+        <SiteHeader nodes={searchable} />
         {children}
-        <ThemeToggle />
       </body>
     </html>
   );

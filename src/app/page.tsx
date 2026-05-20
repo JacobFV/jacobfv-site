@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { AskInput } from "@/components/chrome/AskInput";
-import { CmdK } from "@/components/chrome/CmdK";
 import { OrbitDecor } from "@/components/chrome/OrbitDecor";
 import { PfpReveal } from "@/components/chrome/PfpReveal";
 import { Planetoids } from "@/components/chrome/Planetoids";
@@ -225,16 +224,6 @@ export default function HomePage() {
     ];
   });
 
-  const searchable = nodes.map((n) => ({
-    id: n.id,
-    title: n.title,
-    summary: n.summary,
-    tags: n.tags,
-    lane: n.lane,
-    kind: n.kind,
-    date: n.date,
-  }));
-
   return (
     <>
       <main className="mx-auto max-w-5xl px-6 pt-24 pb-32">
@@ -394,7 +383,7 @@ export default function HomePage() {
         </Section>
 
         {/* ---- All projects ---- */}
-        <Section eyebrow="Index" title="Projects">
+        <Section id="projects" eyebrow="Index" title="Projects">
           <ul className="flex flex-col">
             {allProjects.map((n) => (
               <li key={n.id}>
@@ -423,6 +412,7 @@ export default function HomePage() {
 
         {/* ---- Recent posts ---- */}
         <Section
+          id="posts"
           eyebrow="Writing"
           title="Recent posts"
           link={{ href: "/list", label: "all posts →" }}
@@ -515,8 +505,6 @@ export default function HomePage() {
           </div>
         </footer>
       </main>
-
-      <CmdK nodes={searchable} />
       {latestUpdate && (
         <UpdateDock
           id={latestUpdate.id}
@@ -534,14 +522,16 @@ function Section({
   title,
   link,
   children,
+  id,
 }: {
   eyebrow: string;
   title: string;
   link?: { href: string; label: string };
   children: React.ReactNode;
+  id?: string;
 }) {
   return (
-    <section className="mt-24">
+    <section id={id} className="mt-24 scroll-mt-20">
       <div className="mb-8 flex items-baseline justify-between gap-6">
         <div>
           <p className="text-xs text-[var(--color-ink-mute)]">{eyebrow}</p>
